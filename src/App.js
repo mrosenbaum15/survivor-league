@@ -16,7 +16,7 @@ function App() {
             <Container>
               <Nav className="m-auto">
                 <Nav.Link as={Link} to="/enterPicks">Enter Picks</Nav.Link>
-                <Nav.Link as={Link} to="/curretWeek">Current Week</Nav.Link>
+                <Nav.Link as={Link} to="/currentWeek">Current Week</Nav.Link>
                 <Nav.Link as={Link} to="/standings">Standings</Nav.Link>
                 <Nav.Link as={Link} to="/admin">Admin</Nav.Link>
               </Nav>
