@@ -3,12 +3,14 @@ import { Alert, ButtonGroup, ButtonToolbar, Button, Form} from 'react-bootstrap'
 import './EnterPicks.css';
 import * as NFLIcons from '../../teamIcons'
 
+// API article https://medium.com/swlh/skip-lambda-save-data-to-dynamodb-directly-using-api-gateway-process-later-with-streams-dab2ceef9a9d
 function EnterPicks() {
     const [isTeamSelected, setIsTeamSelected] = useState(false);
     const [currentPick, setCurrentPick] = useState("");
     const [activeButtonArr, setActiveButtonArr] = useState(Array(32).fill(null));
 
 
+    // API - getMatchups
     let matchupsArr = [
         "Vikings (vs Rams)", "Rams (vs Vikings)", "Cowboys (vs Redksins)", "Redskins (vs Cowboys)", 
         "Chargers (vs Texans)", "Texans (vs Chargers)", "Chiefs (vs Steelers)", "Steelers (vs Chiefs)",
@@ -33,10 +35,13 @@ function EnterPicks() {
        matchupsArr = matchupsArr.sort();
     }
 
+    // API - user (teams selected)
     let userPickedTeamsArr = [
         "Vikings", "Chiefs", "Cowboys", "Eagles", "Chargers", "Buccaneers", "Bills"
     ];
 
+    // API - current week (must write lambda function that writes user curr team into back of userPreviousTeams)
+    // if userCurrTeam == "", then userCurrTeam = userPickedTeamsArr(lastElement)
     let userCurrTeam = "Niners";
 
     function handleTeamChosen(event, i) {
@@ -79,6 +84,9 @@ function EnterPicks() {
     function handleSubmit(event) {
         event.preventDefault();
         console.log("Your pick is: "+ currentPick);
+
+        // API - PUT - write to DynamoDB table entry - userCurrTeam
+        // Refresh page, make sure week by week individual summary is updated and current team's button is active
     }
 
     return (

@@ -12,14 +12,15 @@ function App() {
     <div className="App">
       <header className="App-header">
         <BrowserRouter>
-          <Navbar bg="dark" variant="dark"> 
+          <Navbar fixed="top" bg="dark" variant="dark"> 
             <Container>
-              <Nav className="m-auto">
-                <Nav.Link as={Link} to="/enterPicks">Enter Picks</Nav.Link>
-                <Nav.Link as={Link} to="/currentWeek">Current Week</Nav.Link>
-                <Nav.Link as={Link} to="/standings">Standings</Nav.Link>
-                <Nav.Link as={Link} to="/admin">Admin</Nav.Link>
-              </Nav>
+              <Navbar.Brand href="#home">House of Paign</Navbar.Brand>
+                <Nav className="m-auto" style={{paddingRight: "100px"}}>
+                  <Nav.Link as={Link} to="/enterPicks">Enter Picks</Nav.Link>
+                  <Nav.Link as={Link} to="/currentWeek">Current Week</Nav.Link>
+                  <Nav.Link as={Link} to="/standings">Standings</Nav.Link>
+                  <Nav.Link as={Link} to="/admin">Admin</Nav.Link>
+                </Nav>
             </Container>
           </Navbar>
           <Routes>
