@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { Alert, ButtonGroup, ButtonToolbar, Button, Form} from 'react-bootstrap';
+import { ButtonGroup, ButtonToolbar, Button, Form, Card, ListGroup} from 'react-bootstrap';
 import './EnterPicks.css';
 import * as NFLIcons from '../../teamIcons'
 
@@ -12,14 +12,14 @@ function EnterPicks() {
 
     // API - getMatchups
     let matchupsArr = [
-        "Vikings (vs Rams)", "Rams (vs Vikings)", "Cowboys (vs Redksins)", "Redskins (vs Cowboys)", 
-        "Chargers (vs Texans)", "Texans (vs Chargers)", "Chiefs (vs Steelers)", "Steelers (vs Chiefs)",
-        "Cardinals (vs Colts)", "Colts (vs Cardinals)", "Saints (vs Dolphins)", "Dolphins (vs Saints)",
-        "Buccaneers (vs Panthers)", "Panthers (vs Buccaneers)", "Packers (vs Browns)", "Browns (vs Packers)",
-        "Titans (vs Niners)", "Niners (vs Titans)", "Jets (vs Jaguars)", "Jaguars (vs Jets)",
-        "Bears (vs Seahwawks)", "Seahawks (vs Bears)", "Raiders (vs Broncos)", "Broncos (vs Raiders)",
-        "Bengals (vs Ravens)", "Ravens (vs Bengals)", "Patriots (vs Bills)", "Bills (vs Patriots)",
-        "Lions (vs Falcons)", "Falcons (vs Lions)", "Giants (vs Eagles)", "Eagles (vs Giants)"
+        "Vikings (at Packers)", "Rams (at Ravens)", "Cowboys (vs Cardinals)", "Redskins (vs Eagles)", 
+        "Chargers (vs Broncos)", "Texans (at Niners)", "Chiefs (at Bengals)", "Steelers (vs Browns)",
+        "Cardinals (at Cowboys)", "Colts (vs Raiders)", "Saints (vs Panthers)", "Dolphins (at Titans)",
+        "Buccaneers (at Jets)", "Panthers (at Saints)", "Packers (vs Vikings)", "Browns (at Steelers)",
+        "Titans (vs Dolphins)", "Niners (vs Texans)", "Jets (vs Buccaneers)", "Jaguars (at Patriots)",
+        "Bears (vs Giants)", "Seahawks (vs Lions)", "Raiders (at Colts)", "Broncos (at Chargers)",
+        "Bengals (vs Chiefs)", "Ravens (vs Rams)", "Patriots (vs Jaguars)", "Bills (vs Falcons)",
+        "Lions (at Seahawks)", "Falcons (at Bills)", "Giants (at Bears)", "Eagles (at Redskins)"
     ];
 
     const teamIcons = {"Cardinals": NFLIcons.Cardinals,"Falcons": NFLIcons.Falcons,"Ravens": NFLIcons.Ravens,"Bills": NFLIcons.Bills,"Panthers":NFLIcons.Panthers,
@@ -35,14 +35,29 @@ function EnterPicks() {
        matchupsArr = matchupsArr.sort();
     }
 
-    // API - user (teams selected)
-    let userPickedTeamsArr = [
-        "Vikings", "Chiefs", "Cowboys", "Eagles", "Chargers", "Buccaneers", "Bills"
-    ];
+     let userPickedTeamsObj = {
+        "Rams": true, "Browns": true, "Broncos": true, "Cowboys": true, "Buccaneers": true, "Steelers": true, "Cardinals": true, "Chiefs": true, "Colts": true, "Bills": true, "Titans": false, "Texans": false, "Dolphins": true, "Chargers": true, "Niners": true, "Eagles": true, "Patriots": true,
+     }
+
+    const numTotal = Object.keys(userPickedTeamsObj).length;
+    var numCorrect = 0;
+    var startStreak = 0;
+    var streak = true;
+    Object.keys(userPickedTeamsObj).map((team, i) => (
+        (userPickedTeamsObj[team]) ? (numCorrect++, streak ? startStreak++ : null) : streak = false
+    ));
+
 
     // API - current week (must write lambda function that writes user curr team into back of userPreviousTeams)
     // if userCurrTeam == "", then userCurrTeam = userPickedTeamsArr(lastElement)
-    let userCurrTeam = "Niners";
+    let userCurrTeam = "Jaguars";
+
+    function getCurrIcon(team) {
+        var NFLTeam = teamIcons[currTeam];
+        return (
+            <NFLTeam/>
+        )
+    }
 
     function handleTeamChosen(event, i) {
         console.log(event);
@@ -71,7 +86,7 @@ function EnterPicks() {
         currTeam = matchupsArr[i].split(' ')[0];
         var NFLTeam = teamIcons[currTeam];
         
-        if(userPickedTeamsArr.indexOf(currTeam) > -1) {
+        if(currTeam in userPickedTeamsObj) {
             arrButtons.push(<Button variant="outline-secondary" className="pick-select-button" disabled> <NFLTeam/> {matchupsArr[i]}</Button>)
         } else if (currTeam !== userCurrTeam) {
             arrButtons.push(<Button variant="outline-primary" className="pick-select-button" active={(activeButtonArr[i] == null) ? false : activeButtonArr[i]} onClick={(event)=>handleTeamChosen(event,i)}> <NFLTeam/> {matchupsArr[i]} </Button>)
@@ -90,16 +105,36 @@ function EnterPicks() {
     }
 
     return (
-        <div className='team-section'>
-            <Form onSubmit={handleSubmit}>
-                <ButtonToolbar aria-label="Toolbar with button groups">
-                    <ButtonGroup className="me-2 team-group" aria-label="First group">
-                        {arrButtons}
-                        <Button type="submit" disabled={!isTeamSelected}> Submit </Button>
-                    </ButtonGroup>
-                </ButtonToolbar>
-            </Form>
-        </div>
+        <>
+            <div className='main-section'>
+                <div className='team-section'>
+                    <Form onSubmit={handleSubmit}>
+                        <ButtonToolbar aria-label="Toolbar with button groups">
+                            <ButtonGroup className="me-2 team-group" aria-label="First group">
+                                {arrButtons}
+                                <Button type="submit" disabled={!isTeamSelected}> Submit </Button>
+                            </ButtonGroup>
+                        </ButtonToolbar>
+                    </Form>
+                </div>
+                <div className='past-picks-section'>
+                <Card className='past-picks-card'>
+                    <Card.Header className='past-picks-header-1'>Pick History </Card.Header>
+                    <Card.Header>Start Streak: {startStreak}</Card.Header>
+                    <Card.Header>Total Correct: {numCorrect} of {numTotal}</Card.Header>
+                        <ListGroup variant="flush">
+                            {
+                                Object.keys(userPickedTeamsObj).map((team, i) => (
+                                    (userPickedTeamsObj[team]) ? 
+                                        <ListGroup.Item className="modal-bg" style={{color: "green"}}>Week {i+1}: {team}  {React.createElement(teamIcons[team], {})}</ListGroup.Item> :
+                                        <ListGroup.Item className="modal-bg" style={{color: "red"}}>Week {i+1}: {team}  {React.createElement(teamIcons[team], {})}</ListGroup.Item>
+                                ))
+                            }
+                        </ListGroup>
+                    </Card>
+                </div>
+            </div>
+        </>
     )
 }
 
