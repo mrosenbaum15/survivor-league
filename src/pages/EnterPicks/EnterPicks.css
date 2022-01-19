@@ -6,6 +6,13 @@
     display: flex;
 }
 
+.pagination {
+    position: relative;
+    top: 50px;
+    display: flex;
+    justify-content: center;
+}
+
 .team-section {
     flex: 1 1 85%;
 }
@@ -36,3 +43,4 @@
     width: 250px;
     white-space: nowrap;
 }
+

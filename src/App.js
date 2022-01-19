@@ -1,9 +1,9 @@
 import React from 'react';
 import {BrowserRouter, Link, Route, Routes } from 'react-router-dom';
-import Admin from './components/Admin/Admin';
-import CurrentWeek from './components/CurrentWeek/CurrentWeek';
-import EnterPicks from './components/EnterPicks/EnterPicks';
-import Standings from './components/Standings/Standings';
+import Admin from './pages/Admin/Admin';
+import CurrentWeek from './pages/CurrentWeek/CurrentWeek';
+import EnterPicks from './pages/EnterPicks/EnterPicks';
+import Standings from './pages/Standings/Standings';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Navbar, Nav, Container } from 'react-bootstrap';
 
