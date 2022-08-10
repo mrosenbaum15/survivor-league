@@ -1,0 +1,18 @@
+.diff-section {
+    position: relative;
+    display: flex;
+    margin-top: 33%;
+    justify-content: space-evenly;
+}
+
+.spinner-section {
+    display: flex;
+    flex-direction: column;
+}
+
+.spinner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
