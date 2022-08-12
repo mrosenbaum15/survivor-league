@@ -1,11 +1,13 @@
 import { AuthenticationDetails, CognitoUser } from 'amazon-cognito-identity-js';
-import { createContext } from 'react';
+import { createContext, useEffect } from 'react';
 import UserPool from './UserPool';
 
 const AccountContext = createContext();
 
 const Account = (props) => {
   const getSession = async () => {
+
+    console.log("GETTING SESSION");
     await new Promise((resolve, reject) => {
       const user = UserPool.getCurrentUser();
       if (user) {
@@ -13,6 +15,8 @@ const Account = (props) => {
           if (err) {
             reject(err);
           } else {
+            console.log("resolving");
+            console.log(session);
             resolve(session);
           }
         });

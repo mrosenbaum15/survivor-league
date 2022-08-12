@@ -20,9 +20,9 @@ const Status = () => {
   }, [status]);
 
   return (
-    <div>
+    <div style={{position: 'absolute', left: '50%', top: '200px'}}>
       {status ? (
-        <div>
+        <div >
           {' '}
           You are logged in.
           <button onClick={logout}>Logout</button>

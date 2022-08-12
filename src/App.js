@@ -12,10 +12,10 @@ import Register from './components/UserPool/Register';
 import Status from './components/UserPool/Status';
 
 function App() {
+
   return (
 
         <Account>
-          <Status/>
           <BrowserRouter>
             <Navbar fixed="top" bg="dark" variant="dark"> 
               <Container>
@@ -25,17 +25,20 @@ function App() {
                     <Nav.Link as={Link} to="/currentWeek">Current Week</Nav.Link>
                     <Nav.Link as={Link} to="/standings">Standings</Nav.Link>
                     <Nav.Link as={Link} to="/admin">Admin</Nav.Link>
+                    {/* <Nav.Link reloadDocument style={{position: 'absolute', right: '25px'}} as={Link} to="/login">Login</Nav.Link>                     */}
+                    <Nav.Link reloadDocument style={{position: 'absolute', right: '25px'}} as={Link} to="/login">Account</Nav.Link>
                   </Nav>
               </Container>
             </Navbar>
             <Routes>
-              <Route path="/" element={<Login />} />
               <Route path="/register" element={<Register />} />
-              <Route path="/login" element={<Login />} />
+              <Route path="/login" element={<Login/>} />
               <Route path="/currentWeek" element={<CurrentWeek/>}/>
               <Route path="/enterPicks" element={<EnterPicks/>}/>
               <Route path="/standings" element={<Standings/>}/>
               <Route path="/admin" element={<Admin/>}/>
+              <Route path="/" element={<Status/>}/>
+
             </Routes>
           </BrowserRouter>
         </Account>

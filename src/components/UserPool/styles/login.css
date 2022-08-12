@@ -1,0 +1,28 @@
+.login-section {
+    position: relative;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 150px;
+}
+
+.anchor-button {
+    border: none;
+    background: none;
+    text-decoration: underline;
+    color: blue;
+}
+
+.anchor-button:hover {
+    background-color: transparent;
+    color: blue;
+}
+
+.logged-in-section {
+    position: absolute;
+    left: 50%;
+    top: 200px;
+    display: flex;
+    flex-direction: column;
+}
