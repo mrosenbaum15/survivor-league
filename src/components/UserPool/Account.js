@@ -5,7 +5,7 @@ import UserPool from './UserPool';
 const AccountContext = createContext();
 
 const Account = (props) => {
-  const getSession = async () => {
+  const getSession = async (setNewSession) => {
 
     console.log("GETTING SESSION");
     await new Promise((resolve, reject) => {
@@ -15,8 +15,9 @@ const Account = (props) => {
           if (err) {
             reject(err);
           } else {
-            console.log("resolving");
             console.log(session);
+            setNewSession(session);
+            document.getElementById('account-id').innerHTML = 'Welcome, ' + session['idToken']['payload']['name']// = <Nav.Link id='account-id' reloadDocument style={{position: 'absolute', right: '25px'}} as={Link} to="/login">Balls</Nav.Link>
             resolve(session);
           }
         });

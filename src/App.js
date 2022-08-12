@@ -25,8 +25,7 @@ function App() {
                     <Nav.Link as={Link} to="/currentWeek">Current Week</Nav.Link>
                     <Nav.Link as={Link} to="/standings">Standings</Nav.Link>
                     <Nav.Link as={Link} to="/admin">Admin</Nav.Link>
-                    {/* <Nav.Link reloadDocument style={{position: 'absolute', right: '25px'}} as={Link} to="/login">Login</Nav.Link>                     */}
-                    <Nav.Link reloadDocument style={{position: 'absolute', right: '25px'}} as={Link} to="/login">Account</Nav.Link>
+                    <Nav.Link id='account-id' reloadDocument style={{position: 'absolute', right: '25px'}} as={Link} to="/login">Sign In</Nav.Link>
                   </Nav>
               </Container>
             </Navbar>

@@ -3,27 +3,35 @@ import { useState, useContext, useEffect } from 'react';
 import {Button, Form, Modal, Link} from 'react-bootstrap';
 import UserPool from './UserPool';
 import { AccountContext } from './Account';
-import './styles/login.css'
+import LoginForm from './LoginForm/LoginForm';
+import RegisterForm from './RegisterForm/RegisterForm'
+import VerifyAccountForm from './VerifyAccountForm/VerifyAccountForm'
+import './styles/login.css';
 
 
 function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-
-  const [newUserName, setNewUsername] = useState('');
+  
+  const [newName, setNewName] = useState('');
+  const [newUsername, setNewUsername] = useState('');
   const [newEmail, setNewEmail] = useState('');
   const [newPassword, setNewPassword] = useState('');
 
   const [authMode, setAuthMode] = useState("signin");
-  const [showModal, setShowModal] = useState(true);
+
+  const [newSession, setNewSession] = useState(undefined);
+  const [verifyProcess, setVerifyProcess] = useState(false);
+  const [confirmationCode, setConfirmationCode] = useState('');
+
 
   const [status, setStatus] = useState(false);
   const { authenticate, getSession, logout } = useContext(AccountContext);
 
   useEffect(() => {
-    getSession()
+    getSession(setNewSession)
       .then((session) => {
-        console.log('Session: ', session);
+        console.log('Session Activated');
         setStatus(true);
       })
       .catch((err) => {
@@ -36,18 +44,17 @@ function Login() {
     setAuthMode(authMode === "signin" ? "signup" : "signin");
   }
 
-
   const handleLogin =  (e) => {
     e.preventDefault();
     authenticate(username, password)
       .then((data) => {
         console.log(data);
-        alert('login success');
+        alert('Login success');
         window.location.reload();
       })
       .catch((err) => {
         console.log(err);
-        alert('login failure');
+        alert('Login failure. Please contact the admin for a forgotten password.');
       });
   };
 
@@ -60,13 +67,43 @@ function Login() {
         Value: newEmail,
       })
     );
-    UserPool.signUp(newUserName, newPassword, attributeList, null, (err, data) => {
+
+    attributeList.push(
+      new CognitoUserAttribute({
+        Name: 'name',
+        Value: newName,
+      })
+    );
+
+    UserPool.signUp(newUsername, newPassword, attributeList, null, (err, data) => {
       if (err) {
         console.log(err);
-        alert("Couldn't sign up");
+        alert("Couldn't sign up. Please make sure all fields are filled out and password has at least 8 characters, including uppercase and lowercase letters, a number and a special character.");
       } else {
         console.log(data);
+        setVerifyProcess(true);
+        setAuthMode('login')
         alert('User Added Successfully');
+      }
+    });
+  };
+
+  const handleVerify = (e) => {
+    console.log("Verfiying")
+    e.preventDefault();
+    const user = new CognitoUser({
+      Username: newUsername,
+      Pool: UserPool,
+    });
+    console.log(user);
+    user.confirmRegistration(confirmationCode, true, (err, data) => {
+      if (err) {
+        console.log(err);
+        alert("Couldn't verify account. Please contact the admin.");
+      } else {
+        console.log(data);
+        alert('Account verified successfully');
+        window.location.href = '/login';
       }
     });
   };
@@ -74,70 +111,52 @@ function Login() {
   if(authMode === 'signup') {
     return (
       <>
-        <div className='login-section'>
-          <Form>
-            <Form.Group className="mb-3" controlId="formBasicEmaillSignup">
-                  <Form.Label>Email address</Form.Label>
-                  <Form.Control value={newEmail} onChange={(e) => setNewEmail(e.target.value)} type="email" placeholder="Enter email" />
-                  <Form.Text className="text-muted">
-                  </Form.Text>
-              </Form.Group>
-
-            <Form.Group className="mb-3" controlId="formBasicNamelSignup">
-                <Form.Label>Username</Form.Label>
-                <Form.Control value={newUserName} onChange={(e) => setNewUsername(e.target.value)} type="username" placeholder="Enter username" />
-                <Form.Text className="text-muted">
-                </Form.Text>
-            </Form.Group>
-
-            <Form.Group className="mb-3" controlId="formBasicPasswordSignup">
-                <Form.Label>Password</Form.Label>
-                <Form.Control value={newPassword} onChange={(e) => setNewPassword(e.target.value)} type="password" placeholder="Password" />
-            </Form.Group>
-            <div>
-              Already have an account?  
-              <Button className='anchor-button' onClick={changeAuthMode}>Sign in</Button>
-            </div>
-              
-          </Form>
-          <Button onClick={handleRegister} variant="primary">Create Account</Button>
-        </div>
+        <RegisterForm
+          newName={newName}
+          newEmail={newEmail}
+          newUsername={newUsername}
+          newPassword={newPassword}
+          setNewName={setNewName}
+          setNewEmail={setNewEmail}
+          setNewUsername={setNewUsername}
+          setNewPassword={setNewPassword}
+          changeAuthMode={changeAuthMode}
+          handleRegister={handleRegister}
+        />
+      
       </>
 
+      )
+    }
+
+    if(verifyProcess) {
+      return (
+        <VerifyAccountForm
+          confirmationCode={confirmationCode}
+          setConfirmationCode={setConfirmationCode}
+          handleVerify={handleVerify}
+        />
       )
     }
     
     if(!status) {
       return (
-          <>
-            <div className='login-section'>
-              <Form>
-                <Form.Group className="mb-3">
-                    <Form.Label>Username</Form.Label>
-                    <Form.Control value={username} onChange={(e) => setUsername(e.target.value)} type="username" placeholder="Enter username" />
-                    <Form.Text className="text-muted">
-                    </Form.Text>
-                </Form.Group>
+            <LoginForm
+              username={username}
+              password={password}
+              setUsername={setUsername}
+              setPassword={setPassword}
+              changeAuthMode={changeAuthMode}
+              handleLogin={handleLogin}
+            />
 
-                <Form.Group className="mb-3">
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder="Password" />
-                </Form.Group>
-                <div>
-                  Don't have an account?  
-                  <Button className='anchor-button' onClick={changeAuthMode}>Sign up</Button>
-                </div>
-                  
-              </Form>
-              <Button onClick={handleLogin} variant="primary">Login</Button>
-            </div>
-          </>       
       );
     }
     
+    let welcomeText = newSession ? newSession['idToken']['payload']['name'] : 'unknown user';
     return (
       <div className='logged-in-section'>
-          You are logged in.
+          Hello, {welcomeText}
           <Button onClick={logout}>Logout</Button>
       </div>
     )
