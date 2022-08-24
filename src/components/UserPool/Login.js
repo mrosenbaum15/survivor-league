@@ -86,6 +86,8 @@ function Login() {
         alert('User Added Successfully');
       }
     });
+
+    // TO-DO: API, need to create the relevant user and all of the default values
   };
 
   const handleVerify = (e) => {

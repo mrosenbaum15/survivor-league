@@ -20,6 +20,13 @@ function EnterPicks() {
 
     const [userCurrTeam, setUserCurrTeam] = useState(Object.keys(userPickedTeamsObj)[activePage-1]);
 
+    useEffect(() => {
+        console.log("Current team: " + Object.keys(userPickedTeamsObj)[activePage-1]);
+        console.log("Type: " + typeof(Object.keys(userPickedTeamsObj)));
+        console.log("Keys: "+  Object.keys(userPickedTeamsObj));
+        console.log(Object.values(userPickedTeamsObj)[11])
+    },[activePage])
+
     // API - getMatchups (goes with current week of season. Common JSON that has weekly configs)
     let matchupsArr = [
         [
@@ -253,25 +260,35 @@ function EnterPicks() {
 
     function handleTeamChosen(event, i) {
         console.log(event);
-        const buttonText = event.target.innerText;
+        let buttonText = event.target.innerText;
         if(buttonText === undefined) {
-            setIsTeamSelected(false);
-            console.log("UNDEFINED");
-            return;
+            const iconText = (event.target.nearestViewportElement) ? event.target.nearestViewportElement.id : event.target.id;
+            if(iconText === undefined) {
+                setIsTeamSelected(false);
+                console.log("UNDEFINED");
+                return;
+            }
+            buttonText = iconText;
         }
 
         const currName = buttonText.split(' ')[1];
+
+        const unclickTeam = currName == currentPick;
         console.log(i);
         let newActiveArr = new Array(32).fill(false);
-        newActiveArr[i] = true;
+        console.log(unclickTeam);
+        newActiveArr[i] = unclickTeam ? false : true;
         setActiveButtonArr(newActiveArr);
         console.log(newActiveArr);
 
         setIsTeamSelected(true);
-        setCurrentPick(currName);
+
+        if(unclickTeam) setCurrentPick("");
+        else setCurrentPick(currName);
     }
 
     // API - current week (must write lambda function that writes user curr team into back of userPreviousTeams)
+    // userCurrTeam == selected team on the page? 
     // if userCurrTeam == "", then userCurrTeam = userPickedTeamsArr(lastElement)
 
     console.log(currMatchups);
@@ -279,6 +296,8 @@ function EnterPicks() {
 
     console.log(matchupsArr[activePage-1].length);
     
+
+    // TO-DO check if deadline past. Make objects non-selectable/submittable
     let currTeam = "";
     for (let i = 0; i < matchupsArr[activePage-1].length; i++) { 
         currTeam = matchupsArr[activePage-1][i].split(' ')[0];

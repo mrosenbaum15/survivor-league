@@ -12,6 +12,7 @@ const SF = props => {
       fillRule="evenodd"
       viewBox="0 0 560 400"
       xmlns="http://www.w3.org/2000/svg"
+      id="Niners"
     >
       <g transform="matrix(.735 0 0 .735 110.882 100)">
         <ellipse cx="230" cy="136" fill="#fff" rx="230" ry="136" />

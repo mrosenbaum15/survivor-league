@@ -14,6 +14,7 @@ const DAL = props => {
       strokeMiterlimit="1.41421"
       viewBox="0 0 560 400"
       xmlns="http://www.w3.org/2000/svg"
+      id="Cowboys"
     >
       <g
         fillRule="nonzero"

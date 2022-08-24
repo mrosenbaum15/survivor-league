@@ -1,0 +1,58 @@
+.main-section-admin {
+    position: absolute;
+    top: 10%;
+    left: 12%;
+    padding-bottom: 100px;
+    width: 80%;
+}
+
+.pagination {
+    position: relative;
+    top: 125px;
+    display: flex;
+    justify-content: center;
+}
+
+
+.team-group {
+    /* flex-basis: calc( 100% / 24 ); */
+    flex-wrap: wrap;
+}
+
+.pick-select-button {
+    height: 50px;
+    width: 250px;
+    white-space: nowrap;
+}
+
+.pick-select-button-second {
+    height: 50px;
+    width: 250px;
+    white-space: nowrap;
+    margin-left: 10opx;
+}
+
+.pick-select-button-second::after {
+    padding: 50px;
+}
+
+
+.individual-matchup-section {
+    width: 100%;
+}
+
+.admin-submit-section {
+    position: relative;
+    left: 50%;
+    top: 25px;
+}
+
+.team-section {
+    flex: 1 1 100%;
+}
+
+.breaker{
+    display: block;
+    width: 100%;
+    height: 0;
+  }

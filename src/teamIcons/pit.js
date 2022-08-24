@@ -12,6 +12,7 @@ const PIT = props => {
       fillRule="evenodd"
       viewBox="0 0 560 400"
       xmlns="http://www.w3.org/2000/svg"
+      id="Steelers"
     >
       <path d="m129.999 200c0 82.709 67.292 150 150 150s150-67.292 150-150c.008-82.71-67.283-150-150-150-82.702 0-150 67.287-150 150" />
       <path

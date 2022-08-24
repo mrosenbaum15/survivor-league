@@ -12,6 +12,7 @@ const CLE = props => {
       fillRule="evenodd"
       viewBox="-100 0 600 400"
       xmlns="http://www.w3.org/2000/svg"
+      id="Browns"
     >
       <path
           id="path0"
