@@ -1,11 +1,19 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useContext} from 'react';
+import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 import { ButtonGroup, ButtonToolbar, Button, Form, Card, ListGroup, Pagination} from 'react-bootstrap';
 import './EnterPicks.css';
 import * as NFLIcons from '../../teamIcons'
 import CurrentWeek from './../../utils/CurrentWeek';
+import { AccountContext } from './../../components/UserPool/Account';
 
 // API article https://medium.com/swlh/skip-lambda-save-data-to-dynamodb-directly-using-api-gateway-process-later-with-streams-dab2ceef9a9d
 function EnterPicks() {
+    const { authenticate, getSession, logout } = useContext(AccountContext);
+    const [newSession, setNewSession] = useState(undefined);
+
+    let navigate = useNavigate(); 
+
     const [isTeamSelected, setIsTeamSelected] = useState(false);
     const [currentPick, setCurrentPick] = useState("");
     const [activeButtonArr, setActiveButtonArr] = useState(Array(32).fill(null));
@@ -14,6 +22,8 @@ function EnterPicks() {
     const [activePage, setActivePage] = useState(CurrentWeek());
     const [currMatchups, setCurrMatchups] = useState([]);
 
+    const [matchupsArr, setMatchupsArr] = useState([[]]);
+
     let userPickedTeamsObj = {
         "Rams": true, "Browns": true, "Broncos": true, "Cowboys": true, "Buccaneers": true, "Steelers": true, "Cardinals": true, "Chiefs": true, "Colts": true, "Bills": true, "Titans": false, "Texans": false, "Dolphins": true, "Chargers": true, "Niners": true, "Eagles": true, "Patriots": true, "Packers": null
      }
@@ -21,195 +31,45 @@ function EnterPicks() {
     const [userCurrTeam, setUserCurrTeam] = useState(Object.keys(userPickedTeamsObj)[activePage-1]);
 
     useEffect(() => {
-        console.log("Current team: " + Object.keys(userPickedTeamsObj)[activePage-1]);
-        console.log("Type: " + typeof(Object.keys(userPickedTeamsObj)));
-        console.log("Keys: "+  Object.keys(userPickedTeamsObj));
-        console.log(Object.values(userPickedTeamsObj)[11])
-    },[activePage])
+        getSession(setNewSession)
+          .then((session) => {
+            console.log('Session Activated');
+          })
+          .catch((err) => {
+            console.log('Session: ', err);
+          });
+        
+      }, []);
 
-    // API - getMatchups (goes with current week of season. Common JSON that has weekly configs)
-    let matchupsArr = [
-        [
-            "Vikings (at Packers)", "Rams (at Ravens)", "Cowboys (vs Cardinals)", "Redskins (vs Eagles)", 
-            "Chargers (vs Broncos)", "Texans (at Niners)", "Chiefs (at Bengals)", "Steelers (vs Browns)",
-            "Cardinals (at Cowboys)", "Colts (vs Raiders)", "Saints (vs Panthers)", "Dolphins (at Titans)",
-            "Buccaneers (at Jets)", "Panthers (at Saints)", "Packers (vs Vikings)", "Browns (at Steelers)",
-            "Titans (vs Dolphins)", "Niners (vs Texans)", "Jets (vs Buccaneers)", "Jaguars (at Patriots)",
-            "Bears (vs Giants)", "Seahawks (vs Lions)", "Raiders (at Colts)", "Broncos (at Chargers)",
-            "Bengals (vs Chiefs)", "Ravens (vs Rams)", "Patriots (vs Jaguars)", "Bills (vs Falcons)",
-            "Lions (at Seahawks)", "Falcons (at Bills)", "Giants (at Bears)", "Eagles (at Redskins)"
-        ],
-        [
-            "Vikings (at Packers)", "Rams (at Ravens)", "Cowboys (vs Cardinals)", "Redskins (vs Eagles)", 
-            "Chargers (vs Broncos)", "Texans (at Niners)", "Chiefs (at Bengals)", "Steelers (vs Browns)",
-            "Cardinals (at Cowboys)", "Colts (vs Raiders)", "Saints (vs Panthers)", "Dolphins (at Titans)",
-            "Buccaneers (at Jets)", "Panthers (at Saints)", "Packers (vs Vikings)", "Browns (at Steelers)",
-            "Titans (vs Dolphins)", "Niners (vs Texans)", "Jets (vs Buccaneers)", "Jaguars (at Patriots)",
-            "Bears (vs Giants)", "Seahawks (vs Lions)", "Raiders (at Colts)", "Broncos (at Chargers)",
-            "Bengals (vs Chiefs)", "Ravens (vs Rams)", "Patriots (vs Jaguars)", "Bills (vs Falcons)",
-            "Lions (at Seahawks)", "Falcons (at Bills)", "Giants (at Bears)", "Eagles (at Redskins)"
-        ],
-        [
-            "Vikings (at Packers)", "Rams (at Ravens)", "Cowboys (vs Cardinals)", "Redskins (vs Eagles)", 
-            "Chargers (vs Broncos)", "Texans (at Niners)", "Chiefs (at Bengals)", "Steelers (vs Browns)",
-            "Cardinals (at Cowboys)", "Colts (vs Raiders)", "Saints (vs Panthers)", "Dolphins (at Titans)",
-            "Buccaneers (at Jets)", "Panthers (at Saints)", "Packers (vs Vikings)", "Browns (at Steelers)",
-            "Titans (vs Dolphins)", "Niners (vs Texans)", "Jets (vs Buccaneers)", "Jaguars (at Patriots)",
-            "Bears (vs Giants)", "Seahawks (vs Lions)", "Raiders (at Colts)", "Broncos (at Chargers)",
-            "Bengals (vs Chiefs)", "Ravens (vs Rams)", "Patriots (vs Jaguars)", "Bills (vs Falcons)",
-            "Lions (at Seahawks)", "Falcons (at Bills)", "Giants (at Bears)", "Eagles (at Redskins)"
-        ],
-        [
-            "Vikings (at Packers)", "Rams (at Ravens)", "Cowboys (vs Cardinals)", "Redskins (vs Eagles)", 
-            "Chargers (vs Broncos)", "Texans (at Niners)", "Chiefs (at Bengals)", "Steelers (vs Browns)",
-            "Cardinals (at Cowboys)", "Colts (vs Raiders)", "Saints (vs Panthers)", "Dolphins (at Titans)",
-            "Buccaneers (at Jets)", "Panthers (at Saints)", "Packers (vs Vikings)", "Browns (at Steelers)",
-            "Titans (vs Dolphins)", "Niners (vs Texans)", "Jets (vs Buccaneers)", "Jaguars (at Patriots)",
-            "Bears (vs Giants)", "Seahawks (vs Lions)", "Raiders (at Colts)", "Broncos (at Chargers)",
-            "Bengals (vs Chiefs)", "Ravens (vs Rams)", "Patriots (vs Jaguars)", "Bills (vs Falcons)",
-            "Lions (at Seahawks)", "Falcons (at Bills)", "Giants (at Bears)", "Eagles (at Redskins)"
-        ],
-        [
-            "Vikings (at Packers)", "Rams (at Ravens)", "Cowboys (vs Cardinals)", "Redskins (vs Eagles)", 
-            "Chargers (vs Broncos)", "Texans (at Niners)", "Chiefs (at Bengals)", "Steelers (vs Browns)",
-            "Cardinals (at Cowboys)", "Colts (vs Raiders)", "Saints (vs Panthers)", "Dolphins (at Titans)",
-            "Buccaneers (at Jets)", "Panthers (at Saints)", "Packers (vs Vikings)", "Browns (at Steelers)",
-            "Titans (vs Dolphins)", "Niners (vs Texans)", "Jets (vs Buccaneers)", "Jaguars (at Patriots)",
-            "Bears (vs Giants)", "Seahawks (vs Lions)", "Raiders (at Colts)", "Broncos (at Chargers)",
-            "Bengals (vs Chiefs)", "Ravens (vs Rams)", "Patriots (vs Jaguars)", "Bills (vs Falcons)",
-            "Lions (at Seahawks)", "Falcons (at Bills)", "Giants (at Bears)", "Eagles (at Redskins)"
-        ],
-        [
-            "Vikings (at Packers)", "Rams (at Ravens)", "Cowboys (vs Cardinals)", "Redskins (vs Eagles)", 
-            "Chargers (vs Broncos)", "Texans (at Niners)", "Chiefs (at Bengals)", "Steelers (vs Browns)",
-            "Cardinals (at Cowboys)", "Colts (vs Raiders)", "Saints (vs Panthers)", "Dolphins (at Titans)",
-            "Buccaneers (at Jets)", "Panthers (at Saints)", "Packers (vs Vikings)", "Browns (at Steelers)",
-            "Titans (vs Dolphins)", "Niners (vs Texans)", "Jets (vs Buccaneers)", "Jaguars (at Patriots)",
-            "Bears (vs Giants)", "Seahawks (vs Lions)", "Raiders (at Colts)", "Broncos (at Chargers)",
-            "Bengals (vs Chiefs)", "Ravens (vs Rams)", "Patriots (vs Jaguars)", "Bills (vs Falcons)",
-            "Lions (at Seahawks)", "Falcons (at Bills)", "Giants (at Bears)", "Eagles (at Redskins)"
-        ],
-        [
-            "Vikings (at Packers)", "Rams (at Ravens)", "Cowboys (vs Cardinals)", "Redskins (vs Eagles)", 
-            "Chargers (vs Broncos)", "Texans (at Niners)", "Chiefs (at Bengals)", "Steelers (vs Browns)",
-            "Cardinals (at Cowboys)", "Colts (vs Raiders)", "Saints (vs Panthers)", "Dolphins (at Titans)",
-            "Buccaneers (at Jets)", "Panthers (at Saints)", "Packers (vs Vikings)", "Browns (at Steelers)",
-            "Titans (vs Dolphins)", "Niners (vs Texans)", "Jets (vs Buccaneers)", "Jaguars (at Patriots)",
-            "Bears (vs Giants)", "Seahawks (vs Lions)", "Raiders (at Colts)", "Broncos (at Chargers)",
-            "Bengals (vs Chiefs)", "Ravens (vs Rams)", "Patriots (vs Jaguars)", "Bills (vs Falcons)",
-            "Lions (at Seahawks)", "Falcons (at Bills)", "Giants (at Bears)", "Eagles (at Redskins)"
-        ],
-        [
-            "Vikings (at Packers)", "Rams (at Ravens)", "Cowboys (vs Cardinals)", "Redskins (vs Eagles)", 
-            "Chargers (vs Broncos)", "Texans (at Niners)", "Chiefs (at Bengals)", "Steelers (vs Browns)",
-            "Cardinals (at Cowboys)", "Colts (vs Raiders)", "Saints (vs Panthers)", "Dolphins (at Titans)",
-            "Buccaneers (at Jets)", "Panthers (at Saints)", "Packers (vs Vikings)", "Browns (at Steelers)",
-            "Titans (vs Dolphins)", "Niners (vs Texans)", "Jets (vs Buccaneers)", "Jaguars (at Patriots)",
-            "Bears (vs Giants)", "Seahawks (vs Lions)", "Raiders (at Colts)", "Broncos (at Chargers)",
-            "Bengals (vs Chiefs)", "Ravens (vs Rams)", "Patriots (vs Jaguars)", "Bills (vs Falcons)",
-            "Lions (at Seahawks)", "Falcons (at Bills)", "Giants (at Bears)", "Eagles (at Redskins)"
-        ],
-        [
-            "Vikings (at Packers)", "Rams (at Ravens)", "Cowboys (vs Cardinals)", "Redskins (vs Eagles)", 
-            "Chargers (vs Broncos)", "Texans (at Niners)", "Chiefs (at Bengals)", "Steelers (vs Browns)",
-            "Cardinals (at Cowboys)", "Colts (vs Raiders)", "Saints (vs Panthers)", "Dolphins (at Titans)",
-            "Buccaneers (at Jets)", "Panthers (at Saints)", "Packers (vs Vikings)", "Browns (at Steelers)",
-            "Titans (vs Dolphins)", "Niners (vs Texans)", "Jets (vs Buccaneers)", "Jaguars (at Patriots)",
-            "Bears (vs Giants)", "Seahawks (vs Lions)", "Raiders (at Colts)", "Broncos (at Chargers)",
-            "Bengals (vs Chiefs)", "Ravens (vs Rams)", "Patriots (vs Jaguars)", "Bills (vs Falcons)",
-            "Lions (at Seahawks)", "Falcons (at Bills)", "Giants (at Bears)", "Eagles (at Redskins)"
-        ],
-        [
-            "Vikings (at Packers)", "Rams (at Ravens)", "Cowboys (vs Cardinals)", "Redskins (vs Eagles)", 
-            "Chargers (vs Broncos)", "Texans (at Niners)", "Chiefs (at Bengals)", "Steelers (vs Browns)",
-            "Cardinals (at Cowboys)", "Colts (vs Raiders)", "Saints (vs Panthers)", "Dolphins (at Titans)",
-            "Buccaneers (at Jets)", "Panthers (at Saints)", "Packers (vs Vikings)", "Browns (at Steelers)",
-            "Titans (vs Dolphins)", "Niners (vs Texans)", "Jets (vs Buccaneers)", "Jaguars (at Patriots)",
-            "Bears (vs Giants)", "Seahawks (vs Lions)", "Raiders (at Colts)", "Broncos (at Chargers)",
-            "Bengals (vs Chiefs)", "Ravens (vs Rams)", "Patriots (vs Jaguars)", "Bills (vs Falcons)",
-            "Lions (at Seahawks)", "Falcons (at Bills)", "Giants (at Bears)", "Eagles (at Redskins)"
-        ],
-        [
-            "Vikings (at Packers)", "Rams (at Ravens)", "Cowboys (vs Cardinals)", "Redskins (vs Eagles)", 
-            "Chargers (vs Broncos)", "Texans (at Niners)", "Chiefs (at Bengals)", "Steelers (vs Browns)",
-            "Cardinals (at Cowboys)", "Colts (vs Raiders)", "Saints (vs Panthers)", "Dolphins (at Titans)",
-            "Buccaneers (at Jets)", "Panthers (at Saints)", "Packers (vs Vikings)", "Browns (at Steelers)",
-            "Titans (vs Dolphins)", "Niners (vs Texans)", "Jets (vs Buccaneers)", "Jaguars (at Patriots)",
-            "Bears (vs Giants)", "Seahawks (vs Lions)", "Raiders (at Colts)", "Broncos (at Chargers)",
-            "Bengals (vs Chiefs)", "Ravens (vs Rams)", "Patriots (vs Jaguars)", "Bills (vs Falcons)",
-            "Lions (at Seahawks)", "Falcons (at Bills)", "Giants (at Bears)", "Eagles (at Redskins)"
-        ],
-        [
-            "Vikings (at Packers)", "Rams (at Ravens)", "Cowboys (vs Cardinals)", "Redskins (vs Eagles)", 
-            "Chargers (vs Broncos)", "Texans (at Niners)", "Chiefs (at Bengals)", "Steelers (vs Browns)",
-            "Cardinals (at Cowboys)", "Colts (vs Raiders)", "Saints (vs Panthers)", "Dolphins (at Titans)",
-            "Buccaneers (at Jets)", "Panthers (at Saints)", "Packers (vs Vikings)", "Browns (at Steelers)",
-            "Titans (vs Dolphins)", "Niners (vs Texans)", "Jets (vs Buccaneers)", "Jaguars (at Patriots)",
-            "Bears (vs Giants)", "Seahawks (vs Lions)", "Raiders (at Colts)", "Broncos (at Chargers)",
-            "Bengals (vs Chiefs)", "Ravens (vs Rams)", "Patriots (vs Jaguars)", "Bills (vs Falcons)",
-            "Lions (at Seahawks)", "Falcons (at Bills)", "Giants (at Bears)", "Eagles (at Redskins)"
-        ],
-        [
-            "Vikings (at Packers)", "Rams (at Ravens)", "Cowboys (vs Cardinals)", "Redskins (vs Eagles)", 
-            "Chargers (vs Broncos)", "Texans (at Niners)", "Chiefs (at Bengals)", "Steelers (vs Browns)",
-            "Cardinals (at Cowboys)", "Colts (vs Raiders)", "Saints (vs Panthers)", "Dolphins (at Titans)",
-            "Buccaneers (at Jets)", "Panthers (at Saints)", "Packers (vs Vikings)", "Browns (at Steelers)",
-            "Titans (vs Dolphins)", "Niners (vs Texans)", "Jets (vs Buccaneers)", "Jaguars (at Patriots)",
-            "Bears (vs Giants)", "Seahawks (vs Lions)", "Raiders (at Colts)", "Broncos (at Chargers)",
-            "Bengals (vs Chiefs)", "Ravens (vs Rams)", "Patriots (vs Jaguars)", "Bills (vs Falcons)",
-            "Lions (at Seahawks)", "Falcons (at Bills)", "Giants (at Bears)", "Eagles (at Redskins)"
-        ],
-        [
-            "Vikings (at Packers)", "Rams (at Ravens)", "Cowboys (vs Cardinals)", "Redskins (vs Eagles)", 
-            "Chargers (vs Broncos)", "Texans (at Niners)", "Chiefs (at Bengals)", "Steelers (vs Browns)",
-            "Cardinals (at Cowboys)", "Colts (vs Raiders)", "Saints (vs Panthers)", "Dolphins (at Titans)",
-            "Buccaneers (at Jets)", "Panthers (at Saints)", "Packers (vs Vikings)", "Browns (at Steelers)",
-            "Titans (vs Dolphins)", "Niners (vs Texans)", "Jets (vs Buccaneers)", "Jaguars (at Patriots)",
-            "Bears (vs Giants)", "Seahawks (vs Lions)", "Raiders (at Colts)", "Broncos (at Chargers)",
-            "Bengals (vs Chiefs)", "Ravens (vs Rams)", "Patriots (vs Jaguars)", "Bills (vs Falcons)",
-            "Lions (at Seahawks)", "Falcons (at Bills)", "Giants (at Bears)", "Eagles (at Redskins)"
-        ],
-        [
-            "Vikings (at Packers)", "Rams (at Ravens)", "Cowboys (vs Cardinals)", "Redskins (vs Eagles)", 
-            "Chargers (vs Broncos)", "Texans (at Niners)", "Chiefs (at Bengals)", "Steelers (vs Browns)",
-            "Cardinals (at Cowboys)", "Colts (vs Raiders)", "Saints (vs Panthers)", "Dolphins (at Titans)",
-            "Buccaneers (at Jets)", "Panthers (at Saints)", "Packers (vs Vikings)", "Browns (at Steelers)",
-            "Titans (vs Dolphins)", "Niners (vs Texans)", "Jets (vs Buccaneers)", "Jaguars (at Patriots)",
-            "Bears (vs Giants)", "Seahawks (vs Lions)", "Raiders (at Colts)", "Broncos (at Chargers)",
-            "Bengals (vs Chiefs)", "Ravens (vs Rams)", "Patriots (vs Jaguars)", "Bills (vs Falcons)",
-            "Lions (at Seahawks)", "Falcons (at Bills)", "Giants (at Bears)", "Eagles (at Redskins)"
-        ],
-        [
-            "Vikings (at Packers)", "Rams (at Ravens)", "Cowboys (vs Cardinals)", "Redskins (vs Eagles)", 
-            "Chargers (vs Broncos)", "Texans (at Niners)", "Chiefs (at Bengals)", "Steelers (vs Browns)",
-            "Cardinals (at Cowboys)", "Colts (vs Raiders)", "Saints (vs Panthers)", "Dolphins (at Titans)",
-            "Buccaneers (at Jets)", "Panthers (at Saints)", "Packers (vs Vikings)", "Browns (at Steelers)",
-            "Titans (vs Dolphins)", "Niners (vs Texans)", "Jets (vs Buccaneers)", "Jaguars (at Patriots)",
-            "Bears (vs Giants)", "Seahawks (vs Lions)", "Raiders (at Colts)", "Broncos (at Chargers)",
-            "Bengals (vs Chiefs)", "Ravens (vs Rams)", "Patriots (vs Jaguars)", "Bills (vs Falcons)",
-            "Lions (at Seahawks)", "Falcons (at Bills)", "Giants (at Bears)", "Eagles (at Redskins)"
-        ],
-        [
-            "Vikings (at Packers)", "Rams (at Ravens)", "Cowboys (vs Cardinals)", "Redskins (vs Eagles)", 
-            "Chargers (vs Broncos)", "Texans (at Niners)", "Chiefs (at Bengals)", "Steelers (vs Browns)",
-            "Cardinals (at Cowboys)", "Colts (vs Raiders)", "Saints (vs Panthers)", "Dolphins (at Titans)",
-            "Buccaneers (at Jets)", "Panthers (at Saints)", "Packers (vs Vikings)", "Browns (at Steelers)",
-            "Titans (vs Dolphins)", "Niners (vs Texans)", "Jets (vs Buccaneers)", "Jaguars (at Patriots)",
-            "Bears (vs Giants)", "Seahawks (vs Lions)", "Raiders (at Colts)", "Broncos (at Chargers)",
-            "Bengals (vs Chiefs)", "Ravens (vs Rams)", "Patriots (vs Jaguars)", "Bills (vs Falcons)",
-            "Lions (at Seahawks)", "Falcons (at Bills)", "Giants (at Bears)", "Eagles (at Redskins)"
-        ],
-        [
-            "Vikings (vs Bears)", "Rams (vs Niners)", "Cowboys (at Eagles)", "Redskins (vs Giants)", 
-            "Chargers (at Raiders)", "Texans (vs Titans)", "Chiefs (at Broncos)", "Steelers (at Ravens)",
-            "Cardinals (vs Seahawks)", "Colts (at Jaguars)", "Saints (at Falcons)", "Dolphins (vs Patriots)",
-            "Buccaneers (vs Panthers)", "Panthers (at Buccaneers)", "Packers (at Lions)", "Browns (vs Bengals)",
-            "Titans (at Texans)", "Niners (at Rams)", "Jets (at Bills)", "Jaguars (vs Colts)",
-            "Bears (at Vikings)", "Seahawks (at Cardinals)", "Raiders (vs Chargers)", "Broncos (vs Chiefs)",
-            "Bengals (at Browns)", "Ravens (vs Steelers)", "Patriots (vs Dolphins)", "Bills (vs Jets)",
-            "Lions (vs Packers)", "Falcons (vs Saints)", "Giants (at Redskins)", "Eagles (vs Cowboys)"
-        ],
-    ];
+    function getAllMatchups() {
+        // console.log('test');
+        // console.log(newSession['idToken']['jwtToken']);
+        axios.get('https://khvuxdskc6.execute-api.us-east-2.amazonaws.com/prod/get-all-matchups', {
+            headers: {
+                Authorization: newSession['idToken']['jwtToken'],
+                'Content-Type': 'application/json'
+            }
+        }).then((response) => {
+            console.log(response["data"]);
+            setMatchupsArr(response["data"])
+        }).catch((error) => {
+            console.log(error); // NEED TO ADD ERROR HANDLING
+        })
+    }
+
+      useEffect(() => {
+        console.log(newSession)
+        if(newSession != undefined) getAllMatchups();
+      }, [newSession]);
+
+
+
+    // useEffect(() => {
+    //     console.log("Current team: " + Object.keys(userPickedTeamsObj)[activePage-1]);
+    //     console.log("Type: " + typeof(Object.keys(userPickedTeamsObj)));
+    //     console.log("Keys: "+  Object.keys(userPickedTeamsObj));
+    //     console.log(Object.values(userPickedTeamsObj)[11])
+    // },[activePage])
 
     // setActivePage(active);
         // setCurrMatchups (beforeRenderCurrMatchups);
@@ -239,7 +99,7 @@ function EnterPicks() {
                     "Chiefs": NFLIcons.Chiefs,"Chargers": NFLIcons.Chargers,"Rams": NFLIcons.Rams,"Raiders": NFLIcons.Raiders,"Dolphins": NFLIcons.Dolphins,
                     "Vikings": NFLIcons.Vikings,"Patriots": NFLIcons.Patriots,"Saints": NFLIcons.Saints,"Giants": NFLIcons.Giants,"Jets": NFLIcons.Jets,
                     "Eagles": NFLIcons.Eagles,"Steelers": NFLIcons.Steelers,"Seahawks": NFLIcons.Seahawks,"Niners": NFLIcons.Niners,"Buccaneers": NFLIcons.Buccaneers,
-                    "Titans": NFLIcons.Titans,"Redskins": NFLIcons.Redskins
+                    "Titans": NFLIcons.Titans,"Commanders": NFLIcons.Commanders
     };
 
     const numTotal = Object.keys(userPickedTeamsObj).length;
@@ -291,27 +151,56 @@ function EnterPicks() {
     // userCurrTeam == selected team on the page? 
     // if userCurrTeam == "", then userCurrTeam = userPickedTeamsArr(lastElement)
 
-    console.log(currMatchups);
     let arrButtons = [];
-
-    console.log(matchupsArr[activePage-1].length);
-    
+    arrButtons.push(
+        <>
+            <Button className='btn bg-transparent btn-outline-primary transparent-btn'> Away </Button>
+            <p className='breaker-horizontal'/>
+            <Button className='btn bg-transparent btn-outline-primary transparent-btn'> Home </Button>
+            <p className='breaker'/>            
+        </>
+    );    
 
     // TO-DO check if deadline past. Make objects non-selectable/submittable
-    let currTeam = "";
-    for (let i = 0; i < matchupsArr[activePage-1].length; i++) { 
-        currTeam = matchupsArr[activePage-1][i].split(' ')[0];
-        var NFLTeam = teamIcons[currTeam];
+    let firstTeam = "";
+    let secondTeam = "";
+    for (let i = 0; i < matchupsArr[activePage-1].length * 2; i+=2) { 
+        firstTeam = matchupsArr[activePage-1][i/2].split(' ')[0];
+        secondTeam = matchupsArr[activePage-1][i/2].split(' ')[2];
+        var NFLTeamOne = teamIcons[firstTeam];
+        var NFLTeamTwo = teamIcons[secondTeam];
+        console.log(firstTeam);
+        console.log(secondTeam);
         console.log(Object.keys(userPickedTeamsObj)[activePage-1]);
-        if(activePage < CurrentWeek() && Object.keys(userPickedTeamsObj)[activePage-1] != currTeam) {
-            arrButtons.push(<Button variant="outline-secondary" className="pick-select-button" disabled> <NFLTeam/> {matchupsArr[activePage-1][i]}</Button>)
-        } else if(currTeam in userPickedTeamsObj && Object.keys(userPickedTeamsObj)[activePage-1] != currTeam) {
-            arrButtons.push(<Button variant="outline-secondary" className="pick-select-button" disabled> <NFLTeam/> {matchupsArr[activePage-1][i]}</Button>)
-        } else if (currTeam !== Object.keys(userPickedTeamsObj)[activePage-1]) {
-            arrButtons.push(<Button variant="outline-primary" className="pick-select-button" active={(activeButtonArr[i] == null) ? false : activeButtonArr[i]} onClick={(event)=>handleTeamChosen(event,i)}> <NFLTeam/> {matchupsArr[activePage-1][i]} </Button>)
+
+        arrButtons.push(
+            <p className='breaker'/>
+        );
+
+        if(activePage < CurrentWeek() && Object.keys(userPickedTeamsObj)[activePage-1] != firstTeam) {
+            arrButtons.push(<Button variant="outline-secondary" className="pick-select-button" disabled> <NFLTeamOne/>{firstTeam}</Button>)
+        } else if(firstTeam in userPickedTeamsObj && Object.keys(userPickedTeamsObj)[activePage-1] != firstTeam) {
+            arrButtons.push(<Button variant="outline-secondary" className="pick-select-button" disabled> <NFLTeamOne/>{firstTeam}</Button>)
+        } else if (firstTeam !== Object.keys(userPickedTeamsObj)[activePage-1]) {
+            arrButtons.push(<Button variant="outline-primary" className="pick-select-button" active={(activeButtonArr[i] == null) ? false : activeButtonArr[i]} onClick={(event)=>handleTeamChosen(event,i)}> <NFLTeamOne/> {firstTeam} </Button>)
         } else {
-            arrButtons.push(<Button variant="outline-primary" className="pick-select-button" active={(activeButtonArr[i] == null) ? true : activeButtonArr[i]} onClick={(event)=>handleTeamChosen(event,i)}> <NFLTeam/> {matchupsArr[activePage-1][i]} </Button>)
+            arrButtons.push(<Button variant="outline-primary" className="pick-select-button" active={(activeButtonArr[i] == null) ? true : activeButtonArr[i]} onClick={(event)=>handleTeamChosen(event,i)}> <NFLTeamOne/> {firstTeam} </Button>)
         }
+
+        arrButtons.push(
+            <p className='breaker-horizontal'/>
+        );
+
+        if(activePage < CurrentWeek() && Object.keys(userPickedTeamsObj)[activePage-1] != secondTeam) {
+            arrButtons.push(<Button variant="outline-secondary" className="pick-select-button" disabled> <NFLTeamTwo/> {secondTeam}</Button>)
+        } else if(secondTeam in userPickedTeamsObj && Object.keys(userPickedTeamsObj)[activePage-1] != secondTeam) {
+            arrButtons.push(<Button variant="outline-secondary" className="pick-select-button" disabled> <NFLTeamTwo/> {secondTeam}</Button>)
+        } else if (secondTeam !== Object.keys(userPickedTeamsObj)[activePage-1]) {
+            arrButtons.push(<Button variant="outline-primary" className="pick-select-button" active={(activeButtonArr[i+1] == null) ? false : activeButtonArr[i+1]} onClick={(event)=>handleTeamChosen(event,i+1)}> <NFLTeamTwo/> {secondTeam} </Button>)
+        } else {
+            arrButtons.push(<Button variant="outline-primary" className="pick-select-button" active={(activeButtonArr[i+1] == null) ? true : activeButtonArr[i+1]} onClick={(event)=>handleTeamChosen(event,i+1)}> <NFLTeamTwo/> {secondTeam} </Button>)
+        }
+
     }
 
     
@@ -323,7 +212,21 @@ function EnterPicks() {
         // Refresh page, make sure week by week individual summary is updated and current team's button is active
     }
 
-     
+
+
+    function goToLogin() {
+        navigate('/login')
+    }
+
+    if(!newSession) {
+        return (
+            <>
+                <div className='login-button-section'>
+                    <Button onClick={goToLogin}> Sign in </Button>
+                </div>
+            </>
+        )
+    }
 
     return (
         <>
@@ -333,6 +236,7 @@ function EnterPicks() {
                         <ButtonToolbar aria-label="Toolbar with button groups">
                             <ButtonGroup className="me-2 team-group" aria-label="First group">
                                 {arrButtons}
+                                <p className='breaker'/>
                                 <Button type="submit" disabled={!isTeamSelected}> Submit </Button>
                             </ButtonGroup>
                         </ButtonToolbar>
@@ -359,8 +263,6 @@ function EnterPicks() {
                         </ListGroup>
                     </Card>
                 </div>
-                
-
             </div>
         </>
     )

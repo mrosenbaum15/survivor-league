@@ -14,13 +14,12 @@
 }
 
 .team-section {
-    flex: 1 1 85%;
+    flex: 1 1 65%;
 }
 
 .past-picks-section {
-    flex: 1 1 15%;
-    margin-left: 2%;
-    margin-right: 2%;
+    flex: 1 1 10%;
+    margin-right: 100px;
 }
 
 .past-picks-header-1 {
@@ -44,3 +43,29 @@
     white-space: nowrap;
 }
 
+.login-button-section {
+    position: relative;
+    top: 200px;
+    left: 45%;
+}
+
+.at-gap-section {
+    /* position: relative; */
+    /* padding-left: 5px;
+    padding-right: 5px; */
+    padding: 10px 10px 10px 10px;
+}
+
+button.transparent-btn {
+    pointer-events: none;
+    color: blue;
+    background-color: transparent;
+    border: none;
+    font-size: 25px;
+    border-bottom: 2px solid blue;
+}
+
+.breaker-horizontal {
+    padding-left: 25px;
+    padding-right: 25px;
+}

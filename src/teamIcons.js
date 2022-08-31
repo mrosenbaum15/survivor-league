@@ -29,5 +29,5 @@ export { default as Seahawks } from './teamIcons/sea';
 export { default as Niners } from './teamIcons/sf';
 export { default as Buccaneers } from './teamIcons/tb';
 export { default as Titans } from './teamIcons/ten';
-export { default as Redskins } from './teamIcons/was';
+export { default as Commanders } from './teamIcons/was';
 export { default as NFL } from './teamIcons/nfl';

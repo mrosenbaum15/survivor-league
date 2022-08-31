@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 import {BrowserRouter, Link, Route, Routes } from 'react-router-dom';
 import Admin from './pages/Admin/Admin';
 import CurrentWeek from './pages/CurrentWeek/CurrentWeek';
@@ -10,8 +10,47 @@ import { Account } from './components/UserPool/Account';
 import Login from './components/UserPool/Login';
 import Register from './components/UserPool/Register';
 import Status from './components/UserPool/Status';
+import { AccountContext } from './components/UserPool/Account';
 
 function App() {
+
+  const { authenticate, getSession, logout } = useContext(AccountContext);
+  const [newSession, setNewSession] = useState(undefined);
+  const [status, setStatus] = useState(false);
+
+
+  useEffect(() => {
+    getSession(setNewSession)
+      .then((session) => {
+        console.log('Session Activated');
+        console.log(session);
+        setStatus(true);
+      })
+      .catch((err) => {
+        console.log('Session: ', err);
+        setStatus(false)
+      });
+      console.log(status);
+  }, []);
+
+  if(!status) {
+    return (
+      <BrowserRouter>
+            <Navbar fixed="top" bg="dark" variant="dark"> 
+              <Container>
+                <Navbar.Brand href="#home">House of Paign</Navbar.Brand>
+                  <Nav className="m-auto" style={{paddingRight: "100px"}}>
+                    <Nav.Link id='account-id' reloadDocument style={{position: 'absolute', right: '5px', bottom: '10px'}} as={Link} to="/login">Sign In</Nav.Link>
+                  </Nav>
+              </Container>
+            </Navbar>
+            <Routes>
+              <Route path="/register" element={<Register />} />
+              <Route path="/login" element={<Login/>} />
+            </Routes>
+          </BrowserRouter>
+    )
+  }
 
   return (
 
@@ -36,8 +75,7 @@ function App() {
               <Route path="/enterPicks" element={<EnterPicks/>}/>
               <Route path="/standings" element={<Standings/>}/>
               <Route path="/admin" element={<Admin/>}/>
-              <Route path="/" element={<Status/>}/>
-
+              <Route path="/" element={<EnterPicks userInfo={newSession}/>}/>
             </Routes>
           </BrowserRouter>
         </Account>
