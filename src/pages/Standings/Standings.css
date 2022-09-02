@@ -23,17 +23,22 @@
 }
 
 .start-streak-section {
-    flex: 1 1 33%;
+    flex: 1 1 25%;
     margin-left: 2%;
     margin-right: 2%;
 }
 
 .most-correct-section {
-    flex: 1 1 33%;
+    flex: 1 1 25%;
 }
 
 .payout-section {
-    flex: 1 1 33%;
+    margin-left: 2%;
+    flex: 1 1 25%;
+}
+
+.money-distribution-section {
+    flex: 1 1 25%;
     margin-left: 2%;
     margin-right: 10%;
 }

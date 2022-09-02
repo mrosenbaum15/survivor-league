@@ -37,10 +37,18 @@
     flex-wrap: wrap;
 }
 
-.pick-select-button {
+.pick-select-button-left {
     height: 50px;
     width: 250px;
     white-space: nowrap;
+    border: none;
+}
+
+.pick-select-button-right {
+    height: 50px;
+    width: 250px;
+    white-space: nowrap;
+    border-left: none;
 }
 
 .login-button-section {
@@ -53,7 +61,9 @@
     /* position: relative; */
     /* padding-left: 5px;
     padding-right: 5px; */
-    padding: 10px 10px 10px 10px;
+    padding: 10px 10px 14px 10px;
+    border-bottom: 1px solid pink;
+    border-top: 1px solid pink;
 }
 
 button.transparent-btn {

@@ -28,7 +28,10 @@ function EnterPicks() {
         "Rams": true, "Browns": true, "Broncos": true, "Cowboys": true, "Buccaneers": true, "Steelers": true, "Cardinals": true, "Chiefs": true, "Colts": true, "Bills": true, "Titans": false, "Texans": false, "Dolphins": true, "Chargers": true, "Niners": true, "Eagles": true, "Patriots": true, "Packers": null
      }
 
-    const [userCurrTeam, setUserCurrTeam] = useState(Object.keys(userPickedTeamsObj)[activePage-1]);
+    const [userPicks, setUserPicks] = useState([{}]);
+    const [userStats, setUserStats] = useState({});
+
+    const [userCurrTeam, setUserCurrTeam] = useState(Object.keys(matchupsArr[activePage-1])[0]);
 
     useEffect(() => {
         getSession(setNewSession)
@@ -57,9 +60,30 @@ function EnterPicks() {
         })
     }
 
+    function getUserPicks() {
+        // console.log('test');
+        // console.log(newSession['idToken']['jwtToken']);
+        axios.get('https://khvuxdskc6.execute-api.us-east-2.amazonaws.com/prod/userinfo', {
+            headers: {
+                Authorization: newSession['idToken']['jwtToken'],
+                'Content-Type': 'application/json',
+            },
+            params: {'user': newSession['accessToken']['payload']['username']}
+        }).then((response) => {
+            console.log(response["data"]);
+            setUserStats(response["data"]);
+            setUserPicks(response["data"]["user_picked_teams"]);
+        }).catch((error) => {
+            console.log(error); // NEED TO ADD ERROR HANDLING
+        })
+    }
+
       useEffect(() => {
         console.log(newSession)
-        if(newSession != undefined) getAllMatchups();
+        if(newSession != undefined) {
+            getAllMatchups();
+            getUserPicks();
+        }
       }, [newSession]);
 
 
@@ -102,15 +126,6 @@ function EnterPicks() {
                     "Titans": NFLIcons.Titans,"Commanders": NFLIcons.Commanders
     };
 
-    const numTotal = Object.keys(userPickedTeamsObj).length;
-    var numCorrect = 0;
-    var startStreak = 0;
-    var streak = true;
-    Object.keys(userPickedTeamsObj).map((team, i) => (
-        (userPickedTeamsObj[team]) ? (numCorrect++, streak ? startStreak++ : null) : streak = false
-    ));
-
-
     function getCurrIcon(team) {
         var NFLTeam = teamIcons[team];
         return (
@@ -152,14 +167,14 @@ function EnterPicks() {
     // if userCurrTeam == "", then userCurrTeam = userPickedTeamsArr(lastElement)
 
     let arrButtons = [];
-    arrButtons.push(
-        <>
-            <Button className='btn bg-transparent btn-outline-primary transparent-btn'> Away </Button>
-            <p className='breaker-horizontal'/>
-            <Button className='btn bg-transparent btn-outline-primary transparent-btn'> Home </Button>
-            <p className='breaker'/>            
-        </>
-    );    
+    // arrButtons.push(
+    //     <>
+    //         <Button className='btn bg-transparent btn-outline-primary transparent-btn'> Away </Button>
+    //         <p className='breaker-horizontal'/>
+    //         <Button className='btn bg-transparent btn-outline-primary transparent-btn'> Home </Button>
+    //         <p className='breaker'/>            
+    //     </>
+    // );    
 
     // TO-DO check if deadline past. Make objects non-selectable/submittable
     let firstTeam = "";
@@ -171,34 +186,36 @@ function EnterPicks() {
         var NFLTeamTwo = teamIcons[secondTeam];
         console.log(firstTeam);
         console.log(secondTeam);
-        console.log(Object.keys(userPickedTeamsObj)[activePage-1]);
+        console.log(Object.keys(userPicks[activePage-1])[0]);
+        console.log("Rams" in userPicks);
+        console.log(userPicks);
 
         arrButtons.push(
             <p className='breaker'/>
         );
 
         if(activePage < CurrentWeek() && Object.keys(userPickedTeamsObj)[activePage-1] != firstTeam) {
-            arrButtons.push(<Button variant="outline-secondary" className="pick-select-button" disabled> <NFLTeamOne/>{firstTeam}</Button>)
+            arrButtons.push(<Button variant="outline-secondary" className="pick-select-button-left" disabled> <NFLTeamOne/>{firstTeam}</Button>)
         } else if(firstTeam in userPickedTeamsObj && Object.keys(userPickedTeamsObj)[activePage-1] != firstTeam) {
-            arrButtons.push(<Button variant="outline-secondary" className="pick-select-button" disabled> <NFLTeamOne/>{firstTeam}</Button>)
+            arrButtons.push(<Button variant="outline-secondary" className="pick-select-button-left" disabled> <NFLTeamOne/>{firstTeam}</Button>)
         } else if (firstTeam !== Object.keys(userPickedTeamsObj)[activePage-1]) {
-            arrButtons.push(<Button variant="outline-primary" className="pick-select-button" active={(activeButtonArr[i] == null) ? false : activeButtonArr[i]} onClick={(event)=>handleTeamChosen(event,i)}> <NFLTeamOne/> {firstTeam} </Button>)
+            arrButtons.push(<Button variant="outline-primary" className="pick-select-button-left" active={(activeButtonArr[i] == null) ? false : activeButtonArr[i]} onClick={(event)=>handleTeamChosen(event,i)}> <NFLTeamOne/> {firstTeam} </Button>)
         } else {
-            arrButtons.push(<Button variant="outline-primary" className="pick-select-button" active={(activeButtonArr[i] == null) ? true : activeButtonArr[i]} onClick={(event)=>handleTeamChosen(event,i)}> <NFLTeamOne/> {firstTeam} </Button>)
+            arrButtons.push(<Button variant="outline-primary" className="pick-select-button-left" active={(activeButtonArr[i] == null) ? true : activeButtonArr[i]} onClick={(event)=>handleTeamChosen(event,i)}> <NFLTeamOne/> {firstTeam} </Button>)
         }
 
         arrButtons.push(
-            <p className='breaker-horizontal'/>
+            <p className='at-gap-section'> at </p>
         );
 
         if(activePage < CurrentWeek() && Object.keys(userPickedTeamsObj)[activePage-1] != secondTeam) {
-            arrButtons.push(<Button variant="outline-secondary" className="pick-select-button" disabled> <NFLTeamTwo/> {secondTeam}</Button>)
+            arrButtons.push(<Button variant="outline-secondary" className="pick-select-button-right" disabled> <NFLTeamTwo/> {secondTeam}</Button>)
         } else if(secondTeam in userPickedTeamsObj && Object.keys(userPickedTeamsObj)[activePage-1] != secondTeam) {
-            arrButtons.push(<Button variant="outline-secondary" className="pick-select-button" disabled> <NFLTeamTwo/> {secondTeam}</Button>)
+            arrButtons.push(<Button variant="outline-secondary" className="pick-select-button-right" disabled> <NFLTeamTwo/> {secondTeam}</Button>)
         } else if (secondTeam !== Object.keys(userPickedTeamsObj)[activePage-1]) {
-            arrButtons.push(<Button variant="outline-primary" className="pick-select-button" active={(activeButtonArr[i+1] == null) ? false : activeButtonArr[i+1]} onClick={(event)=>handleTeamChosen(event,i+1)}> <NFLTeamTwo/> {secondTeam} </Button>)
+            arrButtons.push(<Button variant="outline-primary" className="pick-select-button-right" active={(activeButtonArr[i+1] == null) ? false : activeButtonArr[i+1]} onClick={(event)=>handleTeamChosen(event,i+1)}> <NFLTeamTwo/> {secondTeam} </Button>)
         } else {
-            arrButtons.push(<Button variant="outline-primary" className="pick-select-button" active={(activeButtonArr[i+1] == null) ? true : activeButtonArr[i+1]} onClick={(event)=>handleTeamChosen(event,i+1)}> <NFLTeamTwo/> {secondTeam} </Button>)
+            arrButtons.push(<Button variant="outline-primary" className="pick-select-button-right" active={(activeButtonArr[i+1] == null) ? true : activeButtonArr[i+1]} onClick={(event)=>handleTeamChosen(event,i+1)}> <NFLTeamTwo/> {secondTeam} </Button>)
         }
 
     }
@@ -246,8 +263,8 @@ function EnterPicks() {
                 <div className='past-picks-section'>
                     <Card className='past-picks-card'>
                         <Card.Header className='past-picks-header-1'>Pick History </Card.Header>
-                        <Card.Header>Start Streak: {startStreak}</Card.Header>
-                        <Card.Header>Total Correct: {numCorrect} of {numTotal}</Card.Header>
+                        <Card.Header>Start Streak: {userStats['start_streak']}</Card.Header>
+                        <Card.Header>Total Correct: {userStats['total_correct']}</Card.Header>
                         <ListGroup variant="flush">
                             {
                                 Object.keys(userPickedTeamsObj).map((team, i) => {

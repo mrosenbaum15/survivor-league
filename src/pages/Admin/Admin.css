@@ -29,7 +29,7 @@
     height: 50px;
     width: 250px;
     white-space: nowrap;
-    margin-left: 10opx;
+    margin-left: 10px;
 }
 
 .pick-select-button-second::after {
