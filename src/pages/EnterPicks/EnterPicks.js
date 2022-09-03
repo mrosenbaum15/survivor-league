@@ -14,9 +14,9 @@ function EnterPicks() {
 
     let navigate = useNavigate(); 
 
-    const [isTeamSelected, setIsTeamSelected] = useState(false);
-    const [currentPick, setCurrentPick] = useState("");
-    const [activeButtonArr, setActiveButtonArr] = useState(Array(32).fill(null));
+    // const [isTeamSelectedArr, setIsTeamSelectedArr] = useState(Array(18).fill(false));
+    const [currentPickArr, setCurrentPickArr] = useState(Array(18).fill(""));
+    const [activeButtonArr, setActiveButtonArr] = useState(Array(18).fill(Array(32).fill(null)));
 
     // API - current week of season
     const [activePage, setActivePage] = useState(CurrentWeek());
@@ -28,7 +28,7 @@ function EnterPicks() {
         "Rams": true, "Browns": true, "Broncos": true, "Cowboys": true, "Buccaneers": true, "Steelers": true, "Cardinals": true, "Chiefs": true, "Colts": true, "Bills": true, "Titans": false, "Texans": false, "Dolphins": true, "Chargers": true, "Niners": true, "Eagles": true, "Patriots": true, "Packers": null
      }
 
-    const [userPicks, setUserPicks] = useState([{}]);
+    const [userPicks, setUserPicks] = useState([{'Team':''}]);
     const [userStats, setUserStats] = useState({});
 
     const [userCurrTeam, setUserCurrTeam] = useState(Object.keys(matchupsArr[activePage-1])[0]);
@@ -44,6 +44,25 @@ function EnterPicks() {
         
       }, []);
 
+    function establishPicks(picks) {
+        console.log(picks);
+
+        setUserPicks(picks);
+
+
+        let updatedPicks = {...currentPickArr}
+        let tempVal;
+        picks.forEach((val,i) => {
+            tempVal = Object.keys(val)[0];
+            if(!tempVal.includes("Team")) updatedPicks[i] = tempVal;
+            console.log(val);
+        }) 
+
+        console.log(updatedPicks);
+        
+        setCurrentPickArr(updatedPicks);
+    }
+
     function getAllMatchups() {
         // console.log('test');
         // console.log(newSession['idToken']['jwtToken']);
@@ -57,7 +76,7 @@ function EnterPicks() {
             setMatchupsArr(response["data"])
         }).catch((error) => {
             console.log(error); // NEED TO ADD ERROR HANDLING
-        })
+        });
     }
 
     function getUserPicks() {
@@ -72,11 +91,36 @@ function EnterPicks() {
         }).then((response) => {
             console.log(response["data"]);
             setUserStats(response["data"]);
-            setUserPicks(response["data"]["user_picked_teams"]);
+            establishPicks(response["data"]["user_picked_teams"]);
         }).catch((error) => {
             console.log(error); // NEED TO ADD ERROR HANDLING
-        })
+        });
     }
+
+    function submitUserPick(event) {
+        event.preventDefault();
+        console.log(currentPickArr[activePage-1].length);
+        axios.put('https://khvuxdskc6.execute-api.us-east-2.amazonaws.com/prod/submit-pick', 
+            {
+                'username': newSession['accessToken']['payload']['username'],
+                'weekNum': activePage,
+                'pick': currentPickArr[activePage-1] || "Team" + activePage
+            },
+            {
+                headers: {
+                    Authorization: newSession['idToken']['jwtToken'],
+                    'Content-Type': 'application/json'
+                }
+            }
+        ).then((response) => {
+            console.log(response["data"]);
+            window.location.reload();
+        }).catch((error) => {
+            console.log(error); // NEED TO ADD ERROR HANDLING
+        });
+
+    }
+
 
       useEffect(() => {
         console.log(newSession)
@@ -102,20 +146,31 @@ function EnterPicks() {
 
     
     console.log(activePage);
-    let items = []
+    let items = [];
+
     for(let i = 1; i < 19; ++i) {
+
         items.push(
             <Pagination.Item key={i} active={i === activePage} onClick={(event)=>{
+                console.log(i);
                 setActivePage(i);
                 console.log("setting");
+                console.log(Object.keys(userPicks[i-1]).includes("Team"));
+                // let newActiveArr = {...activeButtonArr};
+                // newActiveArr.map((val, i) => {
+
+                // })
+                // if(!Object.keys(userPicks[i-1]).includes("Team")) {
+                //     console.log(i-1);
+                //     console.log(Object.keys(userPicks[i-1]))
+                //     newActiveArr[i-1] = true;
+                // } 
+                // setActiveButtonArr(newActiveArr);
             }}>
                 {i}
             </Pagination.Item>
         );
     }
-
-
-    console.log(items);
 
     const teamIcons = {"Cardinals": NFLIcons.Cardinals,"Falcons": NFLIcons.Falcons,"Ravens": NFLIcons.Ravens,"Bills": NFLIcons.Bills,"Panthers":NFLIcons.Panthers,
                    "Bears": NFLIcons.Bears,"Bengals": NFLIcons.Bengals,"Browns": NFLIcons.Browns,"Cowboys": NFLIcons.Cowboys,"Broncos": NFLIcons.Broncos,
@@ -134,32 +189,39 @@ function EnterPicks() {
     }
 
     function handleTeamChosen(event, i) {
-        console.log(event);
         let buttonText = event.target.innerText;
+        // let newTeamSelectedArr = {...isTeamSelectedArr}
+        console.log(buttonText);
         if(buttonText === undefined) {
             const iconText = (event.target.nearestViewportElement) ? event.target.nearestViewportElement.id : event.target.id;
+            console.log(iconText);
             if(iconText === undefined) {
-                setIsTeamSelected(false);
+                // newTeamSelectedArr[activePage-1] = false;
+                // setIsTeamSelectedArr(newTeamSelectedArr);
                 console.log("UNDEFINED");
                 return;
             }
             buttonText = iconText;
         }
 
-        const currName = buttonText.split(' ')[1];
+        const currName = buttonText;
+        console.log(currName.trim());
+        console.log(currentPickArr[activePage-1])
+        const unclickTeam = currName.trim() == currentPickArr[activePage-1].trim();
 
-        const unclickTeam = currName == currentPick;
-        console.log(i);
-        let newActiveArr = new Array(32).fill(false);
-        console.log(unclickTeam);
-        newActiveArr[i] = unclickTeam ? false : true;
+        let newActiveArr = {...activeButtonArr}
+        let newActiveSubArr = new Array(32).fill(false);
+        newActiveSubArr[i] = unclickTeam ? false : true;
+        newActiveArr[activePage-1] = newActiveSubArr;
         setActiveButtonArr(newActiveArr);
-        console.log(newActiveArr);
 
-        setIsTeamSelected(true);
+        // newTeamSelectedArr[activePage-1] = unclickTeam ? false : true;
+        // setIsTeamSelectedArr(newTeamSelectedArr);
 
-        if(unclickTeam) setCurrentPick("");
-        else setCurrentPick(currName);
+        let newPickArr = {...currentPickArr};
+        if(unclickTeam) newPickArr[activePage-1] = ""
+        else newPickArr[activePage-1] = currName;
+        setCurrentPickArr(newPickArr);
     }
 
     // API - current week (must write lambda function that writes user curr team into back of userPreviousTeams)
@@ -179,57 +241,66 @@ function EnterPicks() {
     // TO-DO check if deadline past. Make objects non-selectable/submittable
     let firstTeam = "";
     let secondTeam = "";
+    let isFirstTeamPicked;
+    let isSecondTeamPicked;
+    let buttonColor;
+    let currKey;
+    let currVal;
     for (let i = 0; i < matchupsArr[activePage-1].length * 2; i+=2) { 
         firstTeam = matchupsArr[activePage-1][i/2].split(' ')[0];
         secondTeam = matchupsArr[activePage-1][i/2].split(' ')[2];
+
         var NFLTeamOne = teamIcons[firstTeam];
         var NFLTeamTwo = teamIcons[secondTeam];
-        console.log(firstTeam);
-        console.log(secondTeam);
-        console.log(Object.keys(userPicks[activePage-1])[0]);
-        console.log("Rams" in userPicks);
-        console.log(userPicks);
 
+        currKey = Object.keys(userPicks[activePage-1])[0];
+        currVal = Object.values(userPicks[activePage-1])[0];
+
+        buttonColor = (typeof(currVal) == "string") ? "outline-primary" : (currVal ? "outline-success" : "outline-danger");
+
+        isFirstTeamPicked = userPicks.filter(function (key) {
+                                return key.hasOwnProperty(firstTeam);
+                            }).length > 0;
+
+        isSecondTeamPicked = userPicks.filter(function (key) {
+                                return key.hasOwnProperty(secondTeam);
+                            }).length > 0;
+        
         arrButtons.push(
             <p className='breaker'/>
         );
 
-        if(activePage < CurrentWeek() && Object.keys(userPickedTeamsObj)[activePage-1] != firstTeam) {
+        if(activePage < CurrentWeek() && currKey != firstTeam) {
             arrButtons.push(<Button variant="outline-secondary" className="pick-select-button-left" disabled> <NFLTeamOne/>{firstTeam}</Button>)
-        } else if(firstTeam in userPickedTeamsObj && Object.keys(userPickedTeamsObj)[activePage-1] != firstTeam) {
+        } else if(activePage < CurrentWeek() && currKey == firstTeam) {
+            arrButtons.push(<Button variant={buttonColor} className="pick-select-button-right" active> <NFLTeamOne/> {firstTeam}</Button>)
+        } else if(isFirstTeamPicked && currKey != firstTeam) {
             arrButtons.push(<Button variant="outline-secondary" className="pick-select-button-left" disabled> <NFLTeamOne/>{firstTeam}</Button>)
-        } else if (firstTeam !== Object.keys(userPickedTeamsObj)[activePage-1]) {
-            arrButtons.push(<Button variant="outline-primary" className="pick-select-button-left" active={(activeButtonArr[i] == null) ? false : activeButtonArr[i]} onClick={(event)=>handleTeamChosen(event,i)}> <NFLTeamOne/> {firstTeam} </Button>)
+        } else if (firstTeam !== currKey) {
+            console.log("231")
+            arrButtons.push(<Button variant="outline-primary" className="pick-select-button-left" active={(activeButtonArr[activePage-1][i] == null) ? false : activeButtonArr[activePage-1][i]} onClick={(event)=>handleTeamChosen(event,i)}> <NFLTeamOne/> {firstTeam} </Button>)
         } else {
-            arrButtons.push(<Button variant="outline-primary" className="pick-select-button-left" active={(activeButtonArr[i] == null) ? true : activeButtonArr[i]} onClick={(event)=>handleTeamChosen(event,i)}> <NFLTeamOne/> {firstTeam} </Button>)
+            console.log("234");
+            arrButtons.push(<Button variant="outline-primary" className="pick-select-button-left" active={(activeButtonArr[activePage-1][i] == null) ? true : activeButtonArr[activePage-1][i]} onClick={(event)=>handleTeamChosen(event,i)}> <NFLTeamOne/> {firstTeam} </Button>)
         }
 
         arrButtons.push(
             <p className='at-gap-section'> at </p>
         );
 
-        if(activePage < CurrentWeek() && Object.keys(userPickedTeamsObj)[activePage-1] != secondTeam) {
+        if(activePage < CurrentWeek() && currKey != secondTeam) {
             arrButtons.push(<Button variant="outline-secondary" className="pick-select-button-right" disabled> <NFLTeamTwo/> {secondTeam}</Button>)
-        } else if(secondTeam in userPickedTeamsObj && Object.keys(userPickedTeamsObj)[activePage-1] != secondTeam) {
+        } else if(activePage < CurrentWeek() && currKey == secondTeam) {
+            arrButtons.push(<Button variant={buttonColor} className="pick-select-button-right" active> <NFLTeamTwo/> {secondTeam}</Button>)
+        } else if(isSecondTeamPicked && currKey != secondTeam) {
             arrButtons.push(<Button variant="outline-secondary" className="pick-select-button-right" disabled> <NFLTeamTwo/> {secondTeam}</Button>)
-        } else if (secondTeam !== Object.keys(userPickedTeamsObj)[activePage-1]) {
-            arrButtons.push(<Button variant="outline-primary" className="pick-select-button-right" active={(activeButtonArr[i+1] == null) ? false : activeButtonArr[i+1]} onClick={(event)=>handleTeamChosen(event,i+1)}> <NFLTeamTwo/> {secondTeam} </Button>)
+        } else if (secondTeam !== currKey) {
+            arrButtons.push(<Button variant="outline-primary" className="pick-select-button-right" active={(activeButtonArr[activePage-1][i+1] == null) ? false : activeButtonArr[activePage-1][i+1]} onClick={(event)=>handleTeamChosen(event,i+1)}> <NFLTeamTwo/> {secondTeam} </Button>)
         } else {
-            arrButtons.push(<Button variant="outline-primary" className="pick-select-button-right" active={(activeButtonArr[i+1] == null) ? true : activeButtonArr[i+1]} onClick={(event)=>handleTeamChosen(event,i+1)}> <NFLTeamTwo/> {secondTeam} </Button>)
+            arrButtons.push(<Button variant="outline-primary" className="pick-select-button-right" active={(activeButtonArr[activePage-1][i+1] == null) ? true : activeButtonArr[activePage-1][i+1]} onClick={(event)=>handleTeamChosen(event,i+1)}> <NFLTeamTwo/> {secondTeam} </Button>)
         }
 
     }
-
-    
-    function handleSubmit(event) {
-        event.preventDefault();
-        console.log("Your pick is: "+ currentPick);
-
-        // API - PUT - write to DynamoDB table entry - userCurrTeam
-        // Refresh page, make sure week by week individual summary is updated and current team's button is active
-    }
-
-
 
     function goToLogin() {
         navigate('/login')
@@ -249,12 +320,13 @@ function EnterPicks() {
         <>
             <div className='main-section'>
                 <div className='team-section'>
-                    <Form onSubmit={handleSubmit}>
+                    <Form onSubmit={submitUserPick}>
                         <ButtonToolbar aria-label="Toolbar with button groups">
                             <ButtonGroup className="me-2 team-group" aria-label="First group">
                                 {arrButtons}
                                 <p className='breaker'/>
-                                <Button type="submit" disabled={!isTeamSelected}> Submit </Button>
+                                {/* <Button type="submit" disabled={!isTeamSelectedArr[activePage-1]}> Submit </Button> */}
+                                <Button type="submit"> Submit </Button>
                             </ButtonGroup>
                         </ButtonToolbar>
                     </Form>
@@ -267,13 +339,18 @@ function EnterPicks() {
                         <Card.Header>Total Correct: {userStats['total_correct']}</Card.Header>
                         <ListGroup variant="flush">
                             {
-                                Object.keys(userPickedTeamsObj).map((team, i) => {
-                                    if(userPickedTeamsObj[team] == null) {
-                                        return <ListGroup.Item className="modal-bg" style={{color: "blue"}}>Week {i+1}: {team}  {React.createElement(teamIcons[team], {})}</ListGroup.Item>;
-                                    } else if(userPickedTeamsObj[team]) {
-                                        return <ListGroup.Item className="modal-bg" style={{color: "green"}}>Week {i+1}: {team}  {React.createElement(teamIcons[team], {})}</ListGroup.Item>;
+
+                                userPicks.map((team, i) => {
+                                    let currTeam =  Object.keys(team)[0];
+                                    let result = Object.values(team)[0];
+                                    if(currTeam.includes("Team")) {
+                                        return <ListGroup.Item className="modal-bg" style={{color: "blue"}}>Week {i+1}: </ListGroup.Item>;
+                                    } else if(result == "") {
+                                        return <ListGroup.Item className="modal-bg" style={{color: "blue"}}>Week {i+1}: {currTeam} {React.createElement(teamIcons[currTeam], {})} </ListGroup.Item>;
+                                    } else if(result) {
+                                        return <ListGroup.Item className="modal-bg" style={{color: "green"}}>Week {i+1}: {currTeam} {React.createElement(teamIcons[currTeam], {})} </ListGroup.Item>;
                                     } else {
-                                        return <ListGroup.Item className="modal-bg" style={{color: "red"}}>Week {i+1}: {team}  {React.createElement(teamIcons[team], {})}</ListGroup.Item>;
+                                        return <ListGroup.Item className="modal-bg" style={{color: "red"}}>Week {i+1}: {currTeam} {React.createElement(teamIcons[currTeam], {})} </ListGroup.Item>;
                                     }
                                 })
                             }
