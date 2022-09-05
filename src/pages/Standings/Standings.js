@@ -1,8 +1,8 @@
 import React, {useEffect, useState, useContext} from 'react';
 import axios from 'axios';
-import { ListGroup, Badge, Card } from 'react-bootstrap';
+import { ListGroup, Badge, Card, Modal, Spinner } from 'react-bootstrap';
 import './Standings.css';
-import * as NFLIcons from '../../teamIcons'
+import teamIcons from './../../utils/teamIcons';
 import CurrentWeek from './../../utils/CurrentWeek';
 import { AccountContext } from './../../components/UserPool/Account';
 
@@ -17,6 +17,10 @@ function Standings() {
     const [mostCorrect, setMostCorrect] = useState([]);
 
     const [standings, setStandings] = useState({});
+
+    const [showModal, setShowModal] = useState(false);
+    const [showSpinnerInModal, setShowSpinnerInModal] = useState(true);
+    const [fullUserInfo, setFullUserInfo] = useState(undefined);
 
     useEffect(() => {
         getSession(setNewSession)
@@ -56,14 +60,16 @@ function Standings() {
             console.log(response["data"]);
             setStartStreak(response["data"]["longest_start_streak"]);
             setMostCorrect(response["data"]["most_correct"]);
+            setStandings(response["data"]);
         }).catch((error) => {
             console.log(error); // NEED TO ADD ERROR HANDLING
         })
     }
 
     function getUserInfo(username) {
+        setShowModal(true);
         console.log("GETTING USER INFO for " + username);
-        axios.get('https://khvuxdskc6.execute-api.us-east-2.amazonaws.com/prod/userinfo', {
+        axios.get('https://khvuxdskc6.execute-api.us-east-2.amazonaws.com/prod/user-info-standings', {
             headers: {
                 Authorization: newSession['idToken']['jwtToken'],
                 'Content-Type': 'application/json',
@@ -71,12 +77,14 @@ function Standings() {
             params: {'user': username}
         }).then((response) => {
             console.log(response);
+            setFullUserInfo(response["data"]);
+            setShowSpinnerInModal(false);
         }).catch((error) => {
             console.log(error); // NEED TO ADD ERROR HANDLING
         })
     }
 
-    function getPayoutTiers(currStreakArr) {
+    function getPayoutTiers(currStreakArr, isMostCorrect) {
         let tierNum = 1;
         let highScore = -1;
         let firstTier = "";
@@ -87,7 +95,8 @@ function Standings() {
         for(let i = 0; i < currStreakArr.length; i++) {                
             val = currStreakArr[i];
             currUser = Object.keys(val)[0];
-            currStreak = Object.values(val)[0][0];
+            currStreak = isMostCorrect ? Object.values(val)[0] : Object.values(val)[0][0];
+            console.log(currStreak);
             if(currStreak > highScore) {
                 firstTier = (firstTier == "") ? firstTier + currUser : firstTier + ", " + currUser;
                 highScore = currStreak;
@@ -119,6 +128,7 @@ function Standings() {
       }, [newSession]);
 
       useEffect(() => {
+            console.log({standings})
             let totalEntries = startStreak.length;
             let mostPayout = totalEntries * 6.25;
             let secondLongestPayout = Math.ceil(totalEntries * 2.77);
@@ -133,12 +143,12 @@ function Standings() {
             ]);
             
 
-            let startStreakTiers = getPayoutTiers(startStreak);
+            let startStreakTiers = getPayoutTiers(startStreak, false);
             let firstTierStartStreak = startStreakTiers[0];
             let secondTierStartStreak = startStreakTiers[1];
 
-
-            let mostCorrectTiers = getPayoutTiers(mostCorrect);
+            console.log(mostCorrect);
+            let mostCorrectTiers = getPayoutTiers(mostCorrect, true);
             let firstTierMostStreak = mostCorrectTiers[0];
             let secondTierMostStreak = mostCorrectTiers[1];
 
@@ -147,13 +157,19 @@ function Standings() {
             let numFirstMostCommas = 1 + (firstTierMostStreak.match(/,/g) || []).length;
             let numSecondMostCommas = 1 + (secondTierMostStreak.match(/,/g) || []).length;
 
+            console.log(firstTierStartStreak);
+            console.log(secondTierStartStreak);
+            console.log(mostCorrect);
+            console.log(secondTierMostStreak);
+
             setPayoutsArr([
                 "Longest Start Streak: " + firstTierStartStreak + " ($" +  (firstPayout / numFirstStartCommas).toString() + ")",
                 "Second Longest Start Streak: " + secondTierStartStreak + " ($" +  (secondLongestPayout / numSecondStartCommas).toString() + ")",
                 "Most Correct: " + firstTierMostStreak + " ($" +  (mostPayout / numFirstMostCommas).toString() + ")",
                 "Second Most Correct: " + secondTierMostStreak + " ($" +  (secondLongestPayout / numSecondMostCommas).toString() + ")"
             ]);            
-      }, [startStreak]);
+      }, [standings]);
+
 
     let startStreakItems = []
     let prevVal = -1;
@@ -315,8 +331,49 @@ function Standings() {
                         </ListGroup>
                     </Card>
                 </div>
-
             </div>
+            <Modal className='standings-modal-section' show={showModal} onHide={()=>{setShowModal(false); setShowSpinnerInModal(false); setFullUserInfo(undefined)}}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>
+                            {
+                                !showSpinnerInModal && fullUserInfo
+                                    ? fullUserInfo["username"]
+                                    : ""
+                            }
+                        </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        {
+                            !showSpinnerInModal && fullUserInfo
+                                ? 
+                                    <ListGroup>
+                                        <ListGroup.Item>Start streak: {fullUserInfo["start_streak"]} </ListGroup.Item>
+                                        <ListGroup.Item>Total correct: {fullUserInfo["start_streak"]}</ListGroup.Item>
+                                        <ListGroup.Item>Is start streak alive? {fullUserInfo["is_start_streak_alive"] ? "Yes" : "No"}  </ListGroup.Item>
+                                        
+                                        <ListGroup.Item> Teams selected:
+                                            <ul className='no-bullet-list'>
+                                            {
+                                                fullUserInfo["user_picked_teams"].map((val, i) => {
+                                                    if(Object.keys(val)[0].includes("Team")) return (<li> Week {i+1}: None </li>)
+                                                    let CurrIcon = teamIcons[Object.keys(val)[0]];
+
+                                                    return (
+                                                        <li>
+                                                            Week {i+1}: <CurrIcon/>
+                                                        </li>
+                                                    )
+                                                })
+                                            } 
+                                            </ul>
+                                        </ListGroup.Item>
+                                    </ListGroup>
+                                : <Spinner animation="border" role="status"/>
+
+                                    
+                        }
+                    </Modal.Body>
+            </Modal>   
         </>
     )
 }

@@ -55,3 +55,13 @@
     color: blue;
     text-decoration: underline;
 }
+
+.standings-modal-section {
+    position: absolute;
+    margin-top: 200px;
+    z-index: 1;
+}
+
+.no-bullet-list {
+    list-style-type: none;
+}

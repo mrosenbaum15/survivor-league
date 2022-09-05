@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { ButtonGroup, ButtonToolbar, Button, Form, Card, ListGroup, Pagination} from 'react-bootstrap';
 import './EnterPicks.css';
-import * as NFLIcons from '../../teamIcons'
 import CurrentWeek from './../../utils/CurrentWeek';
+import teamIcons from './../../utils/teamIcons';
 import { AccountContext } from './../../components/UserPool/Account';
 
 // API article https://medium.com/swlh/skip-lambda-save-data-to-dynamodb-directly-using-api-gateway-process-later-with-streams-dab2ceef9a9d
@@ -23,6 +23,8 @@ function EnterPicks() {
     const [currMatchups, setCurrMatchups] = useState([]);
 
     const [matchupsArr, setMatchupsArr] = useState([[]]);
+    const [deadlinesArr, setDeadlinesArr] = useState([[]]);
+    const [showSubmitButton, setShowSubmitButton] = useState(false);
 
     let userPickedTeamsObj = {
         "Rams": true, "Browns": true, "Broncos": true, "Cowboys": true, "Buccaneers": true, "Steelers": true, "Cardinals": true, "Chiefs": true, "Colts": true, "Bills": true, "Titans": false, "Texans": false, "Dolphins": true, "Chargers": true, "Niners": true, "Eagles": true, "Patriots": true, "Packers": null
@@ -73,7 +75,9 @@ function EnterPicks() {
             }
         }).then((response) => {
             console.log(response["data"]);
-            setMatchupsArr(response["data"])
+            setMatchupsArr(response["data"]["matchups"]);
+            setDeadlinesArr(response["data"]["deadlines"]);
+            setShowSubmitButton(true);
         }).catch((error) => {
             console.log(error); // NEED TO ADD ERROR HANDLING
         });
@@ -130,20 +134,6 @@ function EnterPicks() {
         }
       }, [newSession]);
 
-
-
-    // useEffect(() => {
-    //     console.log("Current team: " + Object.keys(userPickedTeamsObj)[activePage-1]);
-    //     console.log("Type: " + typeof(Object.keys(userPickedTeamsObj)));
-    //     console.log("Keys: "+  Object.keys(userPickedTeamsObj));
-    //     console.log(Object.values(userPickedTeamsObj)[11])
-    // },[activePage])
-
-    // setActivePage(active);
-        // setCurrMatchups (beforeRenderCurrMatchups);
-        // setUserCurrTeam(Object.keys(userPickedTeamsObj)[active]);
-
-
     
     console.log(activePage);
     let items = [];
@@ -171,15 +161,6 @@ function EnterPicks() {
             </Pagination.Item>
         );
     }
-
-    const teamIcons = {"Cardinals": NFLIcons.Cardinals,"Falcons": NFLIcons.Falcons,"Ravens": NFLIcons.Ravens,"Bills": NFLIcons.Bills,"Panthers":NFLIcons.Panthers,
-                   "Bears": NFLIcons.Bears,"Bengals": NFLIcons.Bengals,"Browns": NFLIcons.Browns,"Cowboys": NFLIcons.Cowboys,"Broncos": NFLIcons.Broncos,
-                    "Lions": NFLIcons.Lions,"Packers": NFLIcons.Packers,"Texans": NFLIcons.Texans,"Colts": NFLIcons.Colts,"Jaguars": NFLIcons.Jaguars,
-                    "Chiefs": NFLIcons.Chiefs,"Chargers": NFLIcons.Chargers,"Rams": NFLIcons.Rams,"Raiders": NFLIcons.Raiders,"Dolphins": NFLIcons.Dolphins,
-                    "Vikings": NFLIcons.Vikings,"Patriots": NFLIcons.Patriots,"Saints": NFLIcons.Saints,"Giants": NFLIcons.Giants,"Jets": NFLIcons.Jets,
-                    "Eagles": NFLIcons.Eagles,"Steelers": NFLIcons.Steelers,"Seahawks": NFLIcons.Seahawks,"Niners": NFLIcons.Niners,"Buccaneers": NFLIcons.Buccaneers,
-                    "Titans": NFLIcons.Titans,"Commanders": NFLIcons.Commanders
-    };
 
     function getCurrIcon(team) {
         var NFLTeam = teamIcons[team];
@@ -222,6 +203,17 @@ function EnterPicks() {
         if(unclickTeam) newPickArr[activePage-1] = ""
         else newPickArr[activePage-1] = currName;
         setCurrentPickArr(newPickArr);
+    }
+
+    function isPastDeadline(gameNum) {
+        console.log(deadlinesArr[activePage-1][gameNum]);
+
+        // is_dist?
+        // dst:
+        //  tnf: 00:20 the next day, london: 13:30, normal: 17, thanksgiving_early: 16:30, thanksgiving_middle: 20:30, thanksgiving_end: 00:20 the next day
+        //  tnf: 01:20 the next day, london: 14:30, normal: 18, thanksgiving_early: 17:30, thanksgiving_middle: 21:30, thanksgiving_end: 01:20 the next day
+
+        return false;
     }
 
     // API - current week (must write lambda function that writes user curr team into back of userPreviousTeams)
@@ -270,17 +262,17 @@ function EnterPicks() {
             <p className='breaker'/>
         );
 
-        if(activePage < CurrentWeek() && currKey != firstTeam) {
+        if(activePage < CurrentWeek() && currKey != firstTeam || isPastDeadline(i/2)) {
+            arrButtons.push(<Button variant="outline-secondary" className="pick-select-button-left" disabled> <NFLTeamOne/>{firstTeam}</Button>)
+        } else if(activePage < CurrentWeek() && currKey != firstTeam) {
             arrButtons.push(<Button variant="outline-secondary" className="pick-select-button-left" disabled> <NFLTeamOne/>{firstTeam}</Button>)
         } else if(activePage < CurrentWeek() && currKey == firstTeam) {
             arrButtons.push(<Button variant={buttonColor} className="pick-select-button-right" active> <NFLTeamOne/> {firstTeam}</Button>)
         } else if(isFirstTeamPicked && currKey != firstTeam) {
             arrButtons.push(<Button variant="outline-secondary" className="pick-select-button-left" disabled> <NFLTeamOne/>{firstTeam}</Button>)
         } else if (firstTeam !== currKey) {
-            console.log("231")
             arrButtons.push(<Button variant="outline-primary" className="pick-select-button-left" active={(activeButtonArr[activePage-1][i] == null) ? false : activeButtonArr[activePage-1][i]} onClick={(event)=>handleTeamChosen(event,i)}> <NFLTeamOne/> {firstTeam} </Button>)
         } else {
-            console.log("234");
             arrButtons.push(<Button variant="outline-primary" className="pick-select-button-left" active={(activeButtonArr[activePage-1][i] == null) ? true : activeButtonArr[activePage-1][i]} onClick={(event)=>handleTeamChosen(event,i)}> <NFLTeamOne/> {firstTeam} </Button>)
         }
 
@@ -326,11 +318,21 @@ function EnterPicks() {
                                 {arrButtons}
                                 <p className='breaker'/>
                                 {/* <Button type="submit" disabled={!isTeamSelectedArr[activePage-1]}> Submit </Button> */}
-                                <Button type="submit"> Submit </Button>
+                                {
+                                    showSubmitButton
+                                        ? <Button type="submit"> Submit </Button>
+                                        : ""
+                                }
+                                    
                             </ButtonGroup>
                         </ButtonToolbar>
                     </Form>
-                    <Pagination className='pagination'>{items}</Pagination>
+                    {
+                         showSubmitButton
+                         ? <Pagination className='pagination'>{items}</Pagination>
+                         : ""
+                    }
+                    
                 </div>
                 <div className='past-picks-section'>
                     <Card className='past-picks-card'>
