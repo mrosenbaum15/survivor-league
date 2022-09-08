@@ -1,7 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
 import { AccountContext } from './Account';
-import { Link } from 'react-router-dom';
-import { Navbar, Nav, Container } from 'react-bootstrap';
 
 const Status = () => {
   const [status, setStatus] = useState(false);
@@ -14,7 +12,6 @@ const Status = () => {
         setStatus(true);
       })
       .catch((err) => {
-        console.log('Session: ', err);
         setStatus(false);
       });
   }, [status]);

@@ -1,0 +1,31 @@
+.past-picks-section {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    padding-bottom: 50px;
+    justify-content: center;
+}
+
+.past-picks-header-1 {
+    font-size: 30px;
+    border: 1px solid rgba(0,0,0,.125) !important;
+    height: 3rem;
+    width: 16rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.past-picks-header-2 {
+    font-size: 20px;
+    border: 1px solid rgba(0,0,0,.125) !important;
+    height: 3rem;
+}
+
+.past-picks-list-group-items {
+    border: 1px solid rgba(0,0,0,.125) !important;
+    border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0 !important;
+    width: 6rem;
+    height: 6rem;
+}

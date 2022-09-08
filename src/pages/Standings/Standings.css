@@ -1,10 +1,12 @@
-.main-section {
-    position: absolute;
-    margin-top: 100px;
+.main-section-standings {
+    position: relative;
+    margin-top: 75px;
     padding-bottom: 100px;
-    left: 5%;
+    overflow: wrap;
+    flex: 1 1 100%;
     display: flex;
-    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 
@@ -12,35 +14,24 @@
     padding-left: 100px;
 }
 
-.past-picks-header-1 {
+.standings-header-1 {
     font-size: 27px;
 }
 
-.past-picks-card {
+.standings-card {
     color: black;
     width: 18rem;
-    float: right;
 }
 
-.start-streak-section {
-    flex: 1 1 25%;
-    margin-left: 2%;
-    margin-right: 2%;
+.standings-card-section {
+    display: inline-block;
+    overflow: wrap;
+    padding: 50px 0 0 35px;
 }
 
-.most-correct-section {
-    flex: 1 1 25%;
-}
-
-.payout-section {
-    margin-left: 2%;
-    flex: 1 1 25%;
-}
-
-.money-distribution-section {
-    flex: 1 1 25%;
-    margin-left: 2%;
-    margin-right: 10%;
+.standings-card {
+    min-height: 20rem;
+    width: 18rem;
 }
 
 .payouts-item {

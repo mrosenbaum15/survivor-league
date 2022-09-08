@@ -1,8 +1,9 @@
-.diff-section {
+.current-week-section {
     position: relative;
     display: flex;
-    margin-top: 33%;
+    margin-top: 7.5%;
     justify-content: space-evenly;
+    height: 80vh;
 }
 
 .spinner-section {
@@ -15,4 +16,22 @@
     display: flex;
     align-items: center;
     justify-content: space-around;
+}
+
+.pagination-current-week {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    bottom: 50px;
+}
+
+.current-week-table {
+    height: 70vh;
+    position: relative;
+    margin-left: 100px;
+    margin-right: 100px;
+    flex-wrap: wrap;
+    text-align: center;
 }

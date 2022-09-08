@@ -7,7 +7,6 @@ const AccountContext = createContext();
 const Account = (props) => {
   const getSession = async (setNewSession) => {
 
-    console.log("GETTING SESSION");
     await new Promise((resolve, reject) => {
       const user = UserPool.getCurrentUser();
       if (user) {
@@ -15,9 +14,12 @@ const Account = (props) => {
           if (err) {
             reject(err);
           } else {
-            console.log(session);
             setNewSession(session);
-            document.getElementById('account-id').innerHTML = 'Welcome, ' + session['idToken']['payload']['name']// = <Nav.Link id='account-id' reloadDocument style={{position: 'absolute', right: '25px'}} as={Link} to="/login">Balls</Nav.Link>
+            document.getElementById('account-id').innerHTML = 'Acount'// = <Nav.Link id='account-id' reloadDocument style={{position: 'absolute', right: '25px'}} as={Link} to="/login">Balls</Nav.Link>
+            if((!session || session['idToken']['payload']['cognito:groups']) && session['idToken']['payload']['cognito:groups'][0] !== 'admin') {
+              if(document.getElementById('admin-link')) document.getElementById('admin-link').remove();
+            }
+            
             resolve(session);
           }
         });
@@ -41,15 +43,12 @@ const Account = (props) => {
 
       user.authenticateUser(authDetails, {
         onSuccess: (result) => {
-          console.log('login success', result);
           resolve(result);
         },
         onFailure: (err) => {
-          console.log('login failure', err);
           reject(err);
         },
         newPasswordRequired: (data) => {
-          console.log('new password required', data);
           resolve(data);
         },
       });

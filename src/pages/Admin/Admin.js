@@ -1,30 +1,24 @@
 import React, {useEffect, useState, useContext} from 'react';
 import axios from 'axios';
-import { ButtonGroup, ButtonToolbar, Button, Form, Card, ListGroup, Pagination} from 'react-bootstrap';
+import { ButtonGroup, ButtonToolbar, Button, Form, Pagination} from 'react-bootstrap';
 import './Admin.css';
-import * as NFLIcons from '../../teamIcons'
-import CurrentWeek from './../../utils/CurrentWeek';
+import teamIcons from './../../utils/teamIcons';
+import CurrentWeekNum from './../../utils/CurrentWeekNum';
 import { AccountContext } from './../../components/UserPool/Account';
 
 // API article https://medium.com/swlh/skip-lambda-save-data-to-dynamodb-directly-using-api-gateway-process-later-with-streams-dab2ceef9a9d
 function Admin() {
-    const { authenticate, getSession, logout } = useContext(AccountContext);
+    const { getSession } = useContext(AccountContext);
     const [newSession, setNewSession] = useState(undefined);
 
     const [isTeamSelected, setIsTeamSelected] = useState(false);
-    const [currentPick, setCurrentPick] = useState("");
     const [activeButtonArr, setActiveButtonArr] = useState(Array(32).fill(null));
 
     // API - current week of season
-    const [activePage, setActivePage] = useState(CurrentWeek());
+    const [activePage, setActivePage] = useState(CurrentWeekNum());
     const [currMatchups, setCurrMatchups] = useState([]);
 
-    let userPickedTeamsObj = {
-        "Rams": true, "Browns": true, "Broncos": true, "Cowboys": true, "Buccaneers": true, "Steelers": true, "Cardinals": true, "Chiefs": true, "Colts": true, "Bills": true, "Titans": false, "Texans": false, "Dolphins": true, "Chargers": true, "Niners": true, "Eagles": true, "Patriots": true, "Packers": null
-     }
-
     const [matchupsArr, setMatchupsArr] = useState([[]]);
-    const [userCurrTeam, setUserCurrTeam] = useState(Object.keys(userPickedTeamsObj)[activePage-1]);
 
     useEffect(() => {
         getSession(setNewSession)
@@ -37,13 +31,6 @@ function Admin() {
         
       }, []);
 
-    useEffect(() => {
-        console.log("Current team: " + Object.keys(userPickedTeamsObj)[activePage-1]);
-        console.log("Type: " + typeof(Object.keys(userPickedTeamsObj)));
-        console.log("Keys: "+  Object.keys(userPickedTeamsObj));
-        console.log(Object.values(userPickedTeamsObj)[11])
-    },[activePage])
-
     function getAllMatchups() {
         // console.log('test');
         // console.log(newSession['idToken']['jwtToken']);
@@ -54,9 +41,10 @@ function Admin() {
             }
         }).then((response) => {
             console.log(response["data"]);
-            setMatchupsArr(response["data"])
+            setMatchupsArr(response["data"]["matchups"])
         }).catch((error) => {
-            console.log(error); // NEED TO ADD ERROR HANDLING
+            console.log(error); 
+            alert("Unable to get matchups. Refresh the page and try again.");
         })
     }
 
@@ -65,9 +53,6 @@ function Admin() {
         if(newSession !== undefined) getAllMatchups();
       }, [newSession]);
 
-    // setActivePage(active);
-        // setCurrMatchups (beforeRenderCurrMatchups);
-        // setUserCurrTeam(Object.keys(userPickedTeamsObj)[active]);
 
     console.log(activePage);
     let items = []
@@ -81,27 +66,6 @@ function Admin() {
             </Pagination.Item>
         );
     }
-
-
-    console.log(items);
-
-    const teamIcons = {"Cardinals": NFLIcons.Cardinals,"Falcons": NFLIcons.Falcons,"Ravens": NFLIcons.Ravens,"Bills": NFLIcons.Bills,"Panthers":NFLIcons.Panthers,
-                   "Bears": NFLIcons.Bears,"Bengals": NFLIcons.Bengals,"Browns": NFLIcons.Browns,"Cowboys": NFLIcons.Cowboys,"Broncos": NFLIcons.Broncos,
-                    "Lions": NFLIcons.Lions,"Packers": NFLIcons.Packers,"Texans": NFLIcons.Texans,"Colts": NFLIcons.Colts,"Jaguars": NFLIcons.Jaguars,
-                    "Chiefs": NFLIcons.Chiefs,"Chargers": NFLIcons.Chargers,"Rams": NFLIcons.Rams,"Raiders": NFLIcons.Raiders,"Dolphins": NFLIcons.Dolphins,
-                    "Vikings": NFLIcons.Vikings,"Patriots": NFLIcons.Patriots,"Saints": NFLIcons.Saints,"Giants": NFLIcons.Giants,"Jets": NFLIcons.Jets,
-                    "Eagles": NFLIcons.Eagles,"Steelers": NFLIcons.Steelers,"Seahawks": NFLIcons.Seahawks,"Niners": NFLIcons.Niners,"Buccaneers": NFLIcons.Buccaneers,
-                    "Titans": NFLIcons.Titans,"Commanders": NFLIcons.Commanders
-    };
-
-    const numTotal = Object.keys(userPickedTeamsObj).length;
-    var numCorrect = 0;
-    var startStreak = 0;
-    var streak = true;
-    Object.keys(userPickedTeamsObj).map((team, i) => (
-        (userPickedTeamsObj[team]) ? (numCorrect++, streak ? startStreak++ : null) : streak = false
-    ));
-
 
     function getCurrIcon(team) {
         var NFLTeam = teamIcons[team];
@@ -146,13 +110,12 @@ function Admin() {
     }
 
     // API - current week (must write lambda function that writes user curr team into back of userPreviousTeams)
-    // userCurrTeam == selected team on the page? 
-    // if userCurrTeam == "", then userCurrTeam = userPickedTeamsArr(lastElement)
+    // userCurrTeam === selected team on the page? 
+    // if userCurrTeam === "", then userCurrTeam = userPickedTeamsArr(lastElement)
 
     console.log(currMatchups);
     let arrButtons = [];
 
-    console.log(matchupsArr[activePage-1].length);
     
 
     // TO-DO check if deadline past. Make objects non-selectable/submittable
@@ -166,8 +129,8 @@ function Admin() {
         arrButtons.push(
             <>
                 <p className='breaker'/>
-                <Button variant="outline-primary" className="pick-select-button" active={(activeButtonArr[i] == null) ? false : activeButtonArr[i]} onClick={(event)=>handleTeamChosen(event,i, true)}> <NFLTeamOne/> {firstTeam} </Button>
-                <Button variant="outline-primary" className="pick-select-button-second" active={(activeButtonArr[i+1] == null) ? false : activeButtonArr[i+1]} onClick={(event)=>handleTeamChosen(event,i+1, false)}> <NFLTeamTwo/> {secondTeam} </Button>     
+                <Button variant="outline-primary" className="pick-select-button" active={(activeButtonArr[i] === null) ? false : activeButtonArr[i]} onClick={(event)=>handleTeamChosen(event,i, true)}> <NFLTeamOne/> {firstTeam} </Button>
+                <Button variant="outline-primary" className="pick-select-button-second" active={(activeButtonArr[i+1] === null) ? false : activeButtonArr[i+1]} onClick={(event)=>handleTeamChosen(event,i+1, false)}> <NFLTeamTwo/> {secondTeam} </Button>     
             </>
         )
     }
@@ -195,6 +158,16 @@ function Admin() {
         // Refresh page, make sure week by week individual summary is updated and current team's button is active
     }
 
+    if((!newSession || newSession['idToken']['payload']['cognito:groups']) && newSession['idToken']['payload']['cognito:groups'][0] !== 'admin') {
+        return (
+            <>
+                <div className='admin-reject-section'>
+                    <p> This page is for admins only...</p>
+                </div>
+        </>
+        )
+    }
+
      
 
     return (
@@ -212,7 +185,7 @@ function Admin() {
                             </ButtonGroup>
                         </ButtonToolbar>
                     </Form>
-                    <Pagination className='pagination'>{items}</Pagination>
+                    <Pagination className='pagination-admin'>{items}</Pagination>
                 </div>
             </div>
         </>

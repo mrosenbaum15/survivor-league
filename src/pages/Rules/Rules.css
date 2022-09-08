@@ -1,0 +1,19 @@
+.rules-main-section {
+    position: relative;
+    display: inline-block;
+    margin-top: 75px;
+    left: 5%;
+    overflow: wrap;
+    flex: 1 1 100%;
+}
+
+.individual-rule-card {
+    display: inline-block;
+    padding: 50px 0 0 50px;
+    overflow: wrap;
+}
+
+.money {
+    color: green;
+    font-weight: bold;
+}

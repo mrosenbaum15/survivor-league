@@ -1,4 +1,4 @@
-function CurrentWeek() {
+function CurrentWeekNum() {
     let d = new Date();
 
     if(d >= new Date(2022, 9, 13) && d < new Date(2022, 9, 20)){
@@ -41,4 +41,4 @@ function CurrentWeek() {
     
 }
 
-export default CurrentWeek;
+export default CurrentWeekNum;

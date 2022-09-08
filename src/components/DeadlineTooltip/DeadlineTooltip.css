@@ -1,0 +1,30 @@
+.deadline-tooltip-section {
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 25px 50px 0;
+
+}
+
+.deadline-tooltip-display {
+    font-size: 25px;
+    font-weight: bold;
+    padding: 0 10px 0 10px;
+    
+}
+
+.deadline-tooltip-icon {
+    font-size: 25px;
+    color: red;
+}   
+
+#button-tooltip-2 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+}
+
+.tooltip-outline {
+    border: 2px solid red !important;
+}

@@ -3,15 +3,12 @@ import axios from 'axios';
 import { ListGroup, Badge, Card, Modal, Spinner } from 'react-bootstrap';
 import './Standings.css';
 import teamIcons from './../../utils/teamIcons';
-import CurrentWeek from './../../utils/CurrentWeek';
 import { AccountContext } from './../../components/UserPool/Account';
 
 // API article https://medium.com/swlh/skip-lambda-save-data-to-dynamodb-directly-using-api-gateway-process-later-with-streams-dab2ceef9a9d
 function Standings() {
-    const { authenticate, getSession, logout } = useContext(AccountContext);
+    const { getSession } = useContext(AccountContext);
     const [newSession, setNewSession] = useState(undefined);
-
-    const [activePage, setActivePage] = useState(CurrentWeek());
 
     const [startStreak, setStartStreak] = useState([]);
     const [mostCorrect, setMostCorrect] = useState([]);
@@ -50,25 +47,23 @@ function Standings() {
     ]);
 
     function getStandings() {
-        console.log("GETTING STANDINGS");
         axios.get('https://khvuxdskc6.execute-api.us-east-2.amazonaws.com/prod/standings', {
             headers: {
                 Authorization: newSession['idToken']['jwtToken'],
                 'Content-Type': 'application/json'
             }
         }).then((response) => {
-            console.log(response["data"]);
             setStartStreak(response["data"]["longest_start_streak"]);
             setMostCorrect(response["data"]["most_correct"]);
             setStandings(response["data"]);
         }).catch((error) => {
-            console.log(error); // NEED TO ADD ERROR HANDLING
+            console.log(error); 
+            alert("Unable to standings. Refresh the page and try again.");
         })
     }
 
     function getUserInfo(username) {
         setShowModal(true);
-        console.log("GETTING USER INFO for " + username);
         axios.get('https://khvuxdskc6.execute-api.us-east-2.amazonaws.com/prod/user-info-standings', {
             headers: {
                 Authorization: newSession['idToken']['jwtToken'],
@@ -76,11 +71,11 @@ function Standings() {
             },
             params: {'user': username}
         }).then((response) => {
-            console.log(response);
             setFullUserInfo(response["data"]);
             setShowSpinnerInModal(false);
         }).catch((error) => {
-            console.log(error); // NEED TO ADD ERROR HANDLING
+            console.log(error); 
+            alert("Unable to get user info. Refresh the page and try again.");
         })
     }
 
@@ -91,28 +86,25 @@ function Standings() {
         let secondTier = "";
         let val;
 
-        console.log(currStreakArr);
         for(let i = 0; i < currStreakArr.length; i++) {                
             val = currStreakArr[i];
             currUser = Object.keys(val)[0];
             currStreak = isMostCorrect ? Object.values(val)[0] : Object.values(val)[0][0];
-            console.log(currStreak);
             if(currStreak > highScore) {
-                firstTier = (firstTier == "") ? firstTier + currUser : firstTier + ", " + currUser;
+                firstTier = (firstTier === "") ? firstTier + currUser : firstTier + ", " + currUser;
                 highScore = currStreak;
-            } else if(currStreak == highScore && tierNum == 1) {
-                firstTier = (firstTier == "") ? firstTier + currUser : firstTier + ", " + currUser;
-                tierNum = 2; 
-            } else if(currStreak < highScore && tierNum == 1) {
-                secondTier = (secondTier == "") ? secondTier + currUser : secondTier + ", " + currUser;
+            } else if(currStreak === highScore && tierNum === 1) {
+                firstTier = (firstTier === "") ? firstTier + currUser : firstTier + ", " + currUser;
+            } else if(currStreak < highScore && tierNum === 1) {
+                secondTier = (secondTier === "") ? secondTier + currUser : secondTier + ", " + currUser;
                 highScore = currStreak;
                 tierNum = 2; 
-            } else if(currStreak == highScore && tierNum == 2) {
-                secondTier = (secondTier == "") ? secondTier + currUser : secondTier + ", " + currUser;
-                break;
-                
+            } else if(currStreak === highScore && tierNum === 2) {
+                secondTier = (secondTier === "") ? secondTier + currUser : secondTier + ", " + currUser;                
             }
         };
+
+        console.log(secondTier);
 
         return [firstTier, secondTier]
     }
@@ -124,11 +116,10 @@ function Standings() {
 
 
       useEffect(() => {
-        if(newSession != undefined) getStandings();
+        if(newSession !== undefined) getStandings();
       }, [newSession]);
 
       useEffect(() => {
-            console.log({standings})
             let totalEntries = startStreak.length;
             let mostPayout = totalEntries * 6.25;
             let secondLongestPayout = Math.ceil(totalEntries * 2.77);
@@ -136,10 +127,10 @@ function Standings() {
             let firstPayout = 25 * totalEntries - mostPayout - (secondLongestPayout * 2);
 
             setMoneyDistributionArr([
-                "Longest Start Streak: $" + firstPayout,
-                "Second Longest Start Streak: $" + secondLongestPayout,
-                "Most Correct: $" + mostPayout,
-                "Second Most Correct: $" + secondLongestPayout
+                "Longest Start Streak: $" + firstPayout.toFixed(2),
+                "Second Longest Start Streak: $" + secondLongestPayout.toFixed(2),
+                "Most Correct: $" + mostPayout.toFixed(2),
+                "Second Most Correct: $" + secondLongestPayout.toFixed(2)
             ]);
             
 
@@ -147,7 +138,6 @@ function Standings() {
             let firstTierStartStreak = startStreakTiers[0];
             let secondTierStartStreak = startStreakTiers[1];
 
-            console.log(mostCorrect);
             let mostCorrectTiers = getPayoutTiers(mostCorrect, true);
             let firstTierMostStreak = mostCorrectTiers[0];
             let secondTierMostStreak = mostCorrectTiers[1];
@@ -157,16 +147,11 @@ function Standings() {
             let numFirstMostCommas = 1 + (firstTierMostStreak.match(/,/g) || []).length;
             let numSecondMostCommas = 1 + (secondTierMostStreak.match(/,/g) || []).length;
 
-            console.log(firstTierStartStreak);
-            console.log(secondTierStartStreak);
-            console.log(mostCorrect);
-            console.log(secondTierMostStreak);
-
             setPayoutsArr([
-                "Longest Start Streak: " + firstTierStartStreak + " ($" +  (firstPayout / numFirstStartCommas).toString() + ")",
-                "Second Longest Start Streak: " + secondTierStartStreak + " ($" +  (secondLongestPayout / numSecondStartCommas).toString() + ")",
-                "Most Correct: " + firstTierMostStreak + " ($" +  (mostPayout / numFirstMostCommas).toString() + ")",
-                "Second Most Correct: " + secondTierMostStreak + " ($" +  (secondLongestPayout / numSecondMostCommas).toString() + ")"
+                "Longest Start Streak: " + firstTierStartStreak + " ($" +  (firstPayout / numFirstStartCommas).toFixed(2).toString() + ")",
+                "Second Longest Start Streak: " + secondTierStartStreak + " ($" +  (secondLongestPayout / numSecondStartCommas).toFixed(2).toString() + ")",
+                "Most Correct: " + firstTierMostStreak + " ($" +  (mostPayout / numFirstMostCommas).toFixed(2).toString() + ")",
+                "Second Most Correct: " + secondTierMostStreak + " ($" +  (secondLongestPayout / numSecondMostCommas).toFixed(2).toString() + ")"
             ]);            
       }, [standings]);
 
@@ -178,7 +163,6 @@ function Standings() {
     let currStreak = 0;
     let isStreakAlive = true;
     let badgeStyle;
-    let index = 0;
     startStreak.forEach((val) => {
         currUser = Object.keys(val)[0];
         currStreak = Object.values(val)[0][0];
@@ -187,7 +171,7 @@ function Standings() {
         // add mappings between name and username here
         badgeStyle = isStreakAlive ? "success" : "danger";
 
-        if(currStreak == prevVal) {
+        if(currStreak === prevVal) {
             startStreakItems.push(
                 <>
                     <ListGroup.Item action onClick={showUserInfoModal} className="d-flex justify-content-between align-items-start cursor"> 
@@ -216,19 +200,17 @@ function Standings() {
         }
 
         prevVal = currStreak;
-        index++;
     });
 
     let mostCorrectItems = []
     let currUserMost = "";
     let currStreakMost = 0;
     prevVal = -1;
-    index = 0;
     mostCorrect.forEach((val) => {
         currUserMost = Object.keys(val)[0];
         currStreakMost = Object.values(val)[0];
 
-        if(currStreakMost == prevVal) {
+        if(currStreakMost === prevVal) {
             mostCorrectItems.push(
                 <>
                     <ListGroup.Item action onClick={showUserInfoModal} className="d-flex justify-content-between align-items-start cursor"> 
@@ -257,7 +239,6 @@ function Standings() {
         }
 
         prevVal = currStreakMost;
-        index++;
     });
 
     let payoutsItems = []
@@ -290,29 +271,29 @@ function Standings() {
 
     return (
         <>
-            <div className='main-section'>
-                <div className='start-streak-section'>
-                    <Card className='past-picks-card'>
-                        <Card.Header className='past-picks-header-1'> Longest Start Streak </Card.Header>
-                        <ListGroup as="ol" numbered>
+            <div className='main-section-standings'>
+            <div className='standings-card-section'>
+            <Card className='standings-card'>
+                        <Card.Header className='standings-header-1'> Longest Start Streak </Card.Header>
+                        <ListGroup variant="flush" as="ol" numbered>
                             {startStreakItems}
                         </ListGroup>
                     </Card>
                 </div>
 
-                <div className='most-correct-section'>
-                    <Card className='past-picks-card'>
-                        <Card.Header className='past-picks-header-1'> Most Correct </Card.Header>
-                        <ListGroup className="most-correct-section"as="ol" numbered>
+                <div className='standings-card-section'>
+                    <Card className='standings-card'>
+                        <Card.Header className='standings-header-1'> Most Correct </Card.Header>
+                        <ListGroup variant="flush" as="ol" numbered>
                             {mostCorrectItems}
                         </ListGroup>
                     </Card>
 
                 </div>
 
-                <div className='payout-section'>
-                    <Card className='past-picks-card'>
-                        <Card.Header className='past-picks-header-1'> Payouts </Card.Header>
+                <div className='standings-card-section'>
+                    <Card className='standings-card'>
+                        <Card.Header className='standings-header-1'> Payouts </Card.Header>
                         <ListGroup variant="flush">
                             
                             {payoutsItems}
@@ -321,9 +302,9 @@ function Standings() {
                     </Card>
                 </div>
 
-                <div className='money-distribution-section'>
-                    <Card className='past-picks-card'>
-                        <Card.Header className='past-picks-header-1'> Money Distribution </Card.Header>
+                <div className='standings-card-section'>
+                    <Card className='standings-card'>
+                        <Card.Header className='standings-header-1'> Money Distribution </Card.Header>
                         <ListGroup variant="flush">
                             
                             {moneyDistItems}

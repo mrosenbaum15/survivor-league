@@ -1,35 +1,20 @@
 .main-section {
-    position: absolute;
-    margin-top: 100px;
+    position: relative;
+    margin-top: 50px;
     left: 2%;
     padding-bottom: 100px;
-    display: flex;
+    width: 90%;
 }
 
-.pagination {
+.pagination-enter-picks {
     position: relative;
     top: 50px;
     display: flex;
-    justify-content: center;
+    flex-wrap: wrap ;
 }
 
 .team-section {
     flex: 1 1 65%;
-}
-
-.past-picks-section {
-    flex: 1 1 10%;
-    margin-right: 100px;
-}
-
-.past-picks-header-1 {
-    font-size: 27px;
-}
-
-.past-picks-card {
-    color: blue;
-    width: 18rem;
-    float: right;
 }
 
 .team-group {
@@ -37,18 +22,10 @@
     flex-wrap: wrap;
 }
 
-.pick-select-button-left {
+.pick-select-button {
     height: 50px;
     width: 250px;
     white-space: nowrap;
-    border: none;
-}
-
-.pick-select-button-right {
-    height: 50px;
-    width: 250px;
-    white-space: nowrap;
-    border-left: none;
 }
 
 .login-button-section {
@@ -78,4 +55,14 @@ button.transparent-btn {
 .breaker-horizontal {
     padding-left: 25px;
     padding-right: 25px;
+}
+
+.game-day-header {
+    font-size: 20px;
+    width: 100%;
+    position: relative;
+    background-color: lightsalmon;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 25px;
 }

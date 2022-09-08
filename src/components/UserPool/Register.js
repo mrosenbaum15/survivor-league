@@ -21,7 +21,6 @@ function Register() {
         console.log(err);
         alert("Couldn't sign up");
       } else {
-        console.log(data);
         alert('User Added Successfully');
       }
     });
