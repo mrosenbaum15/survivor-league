@@ -64,7 +64,6 @@ function Login() {
     e.preventDefault();
     authenticate(username, password)
       .then((data) => {
-        alert('Login success');
         window.location.href='/enterPicks';
       })
       .catch((err) => {

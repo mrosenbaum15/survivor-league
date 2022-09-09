@@ -1,16 +1,16 @@
 .main-section {
     position: relative;
-    margin-top: 50px;
-    left: 2%;
+    margin: 50px 0 0 3%;
     padding-bottom: 100px;
-    width: 90%;
+    width: 95%;
 }
 
 .pagination-enter-picks {
     position: relative;
     top: 50px;
     display: flex;
-    flex-wrap: wrap ;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .team-section {
@@ -35,9 +35,6 @@
 }
 
 .at-gap-section {
-    /* position: relative; */
-    /* padding-left: 5px;
-    padding-right: 5px; */
     padding: 10px 10px 14px 10px;
     border-bottom: 1px solid pink;
     border-top: 1px solid pink;
@@ -50,11 +47,6 @@ button.transparent-btn {
     border: none;
     font-size: 25px;
     border-bottom: 2px solid blue;
-}
-
-.breaker-horizontal {
-    padding-left: 25px;
-    padding-right: 25px;
 }
 
 .game-day-header {

@@ -190,7 +190,7 @@ function EnterPicks() {
         currVal = Object.values(userPicks[activePage-1])[0];
 
         buttonColor = (typeof(currVal) === "string") ? "outline-primary" : (currVal ? "outline-success" : "outline-danger");
-
+        
         isFirstTeamPicked = userPicks.filter(function (key) {
                                 return key.hasOwnProperty(firstTeam);
                             }).length > 0;
@@ -201,7 +201,7 @@ function EnterPicks() {
         
         if(i > 0) {
             arrButtons.push(
-                <p className='breaker'/>
+                <p key={i+'-p'} className='breaker'/>
             );
         }
 
@@ -210,55 +210,55 @@ function EnterPicks() {
         if(currDeadline !== prevDeadline) {
             if(currDeadline === 'tnf') {
                 arrButtons.push(
-                    <span className={'game-day-header'}> Thursday </span>
+                    <span key={i+'-span'} className={'game-day-header'}> Thursday </span>
                 )
             } else if(currDeadline.includes("christmas")){
                 arrButtons.push(
-                    <span className={'game-day-header'}> Christmas </span>
+                    <span key={i+'-span'} className={'game-day-header'}> Christmas </span>
                 )
             } else if(activePage === 16 && currDeadline === "normal"){
                 arrButtons.push(
-                    <span className={'game-day-header'}> Saturday Early Afternoon</span>
+                    <span key={i+'-span'} className={'game-day-header'}> Saturday Early Afternoon</span>
                 )
             } else if(activePage === 16 && currDeadline === "normal_afternoon"){
                 arrButtons.push(
-                    <span className={'game-day-header'}> Saturday Late Afternoon</span>
+                    <span key={i+'-span'} className={'game-day-header'}> Saturday Late Afternoon</span>
                 )
             } else if(activePage === 16 && currDeadline === "normal_night"){
                 arrButtons.push(
-                    <span className={'game-day-header'}> Saturday Night </span>
+                    <span key={i+'-span'} className={'game-day-header'}> Saturday Night </span>
                 )
             } else if(currDeadline === 'normal'){
                 arrButtons.push(
-                    <span className={'game-day-header'}> Sunday Early Afternoon </span>
+                    <span key={i+'-span'} className={'game-day-header'}> Sunday Early Afternoon </span>
                 )
             } else if(currDeadline === 'normal_afternoon'){
                 arrButtons.push(
-                    <span className={'game-day-header'}> Sunday Late Afternoon</span>
+                    <span key={i+'-span'} className={'game-day-header'}> Sunday Late Afternoon</span>
                 )
             } else if(currDeadline === 'normal_night'){
                 arrButtons.push(
-                    <span className={'game-day-header'}> Sunday Night </span>
+                    <span key={i+'-span'} className={'game-day-header'}> Sunday Night </span>
                 )
             } else if(currDeadline === 'mnf'){
                 arrButtons.push(
-                    <span className={'game-day-header'}> Monday </span>
+                    <span key={i+'-span'} className={'game-day-header'}> Monday </span>
                 )
             } else if(currDeadline === 'london'){
                 arrButtons.push(
-                    <span className={'game-day-header'}> Sunday AM in London </span>
+                    <span key={i+'-span'} lassName={'game-day-header'}> Sunday AM in London </span>
                 )
             } else if(currDeadline === 'thanksgiving_morning') {
                 arrButtons.push(
-                    <span className={'game-day-header'}> Thanksgiving Morning </span>
+                    <span key={i+'-span'} className={'game-day-header'}> Thanksgiving Morning </span>
                 )
             } else if(currDeadline === 'thanksgiving_afternoon') {
                 arrButtons.push(
-                    <span className={'game-day-header'}> Thanksgiving Afternoon </span>
+                    <span key={i+'-span'} className={'game-day-header'}> Thanksgiving Afternoon </span>
                 )
             } else if(currDeadline === 'thanksgiving_night') {
                 arrButtons.push(
-                    <span className={'game-day-header'}> Thanksgiving Night </span>
+                    <span key={i+'-span'} className={'game-day-header'}> Thanksgiving Night </span>
                 )
             }
         } 
@@ -266,35 +266,36 @@ function EnterPicks() {
         prevDeadline = currDeadline;
         eligibility = PickEligibility(activePage, currDeadline);
         if((activePage < CurrentWeekNum() || !eligibility) && currKey !== firstTeam) {
-            arrButtons.push(<Button variant="outline-secondary" className="pick-select-button" disabled> <NFLTeamOne/>{firstTeam}</Button>)
+            arrButtons.push(<Button key={i} variant="outline-secondary" className="pick-select-button" disabled> <NFLTeamOne/>{firstTeam}</Button>)
         } else if((activePage < CurrentWeekNum() || !eligibility) && currKey !== firstTeam) {
-            arrButtons.push(<Button variant="outline-secondary" className="pick-select-button" disabled> <NFLTeamOne/>{firstTeam}</Button>)
+            arrButtons.push(<Button key={i} variant={buttonColor} className="pick-select-button" disabled> <NFLTeamOne/>{firstTeam}</Button>)
         } else if(activePage < CurrentWeekNum() && currKey === firstTeam) {
-            arrButtons.push(<Button variant={buttonColor} className="pick-select-button" active> <NFLTeamOne/> {firstTeam}</Button>)
+            arrButtons.push(<Button key={i} variant={buttonColor} className="pick-select-button" active> <NFLTeamOne/> {firstTeam}</Button>)
         } else if(isFirstTeamPicked && currKey !== firstTeam) {
-            arrButtons.push(<Button variant="outline-secondary" className="pick-select-button" disabled> <NFLTeamOne/>{firstTeam}</Button>)
+            arrButtons.push(<Button key={i} variant="outline-secondary" className="pick-select-button" disabled> <NFLTeamOne/>{firstTeam}</Button>)
         } else if (firstTeam !== currKey) {
-            arrButtons.push(<Button variant="outline-primary" className="pick-select-button" active={(activeButtonArr[activePage-1][i] === null) ? false : activeButtonArr[activePage-1][i]} onClick={(event)=>handleTeamChosen(event,i)}> <NFLTeamOne/> {firstTeam} </Button>)
+            arrButtons.push(<Button key={i} variant="outline-primary" className="pick-select-button" active={(activeButtonArr[activePage-1][i] === null) ? false : activeButtonArr[activePage-1][i]} onClick={(event)=>handleTeamChosen(event,i)}> <NFLTeamOne/> {firstTeam} </Button>)
         } else {
-            arrButtons.push(<Button variant="outline-primary" className="pick-select-button" active={(activeButtonArr[activePage-1][i] === null) ? true : activeButtonArr[activePage-1][i]} onClick={(event)=>handleTeamChosen(event,i)}> <NFLTeamOne/> {firstTeam} </Button>)
+            arrButtons.push(<Button key={i} variant={buttonColor} className="pick-select-button" active={(activeButtonArr[activePage-1][i] === null) ? true : activeButtonArr[activePage-1][i]} onClick={(event)=>handleTeamChosen(event,i)}> <NFLTeamOne/> {firstTeam} </Button>)
         }
 
         arrButtons.push(
-            <p className='at-gap-section'> at </p>
+            // <p className='at-gap-section'> at </p>
         );
 
         if((activePage < CurrentWeekNum() || !eligibility) && currKey !== secondTeam) {
-            arrButtons.push(<Button variant="outline-secondary" className="pick-select-button" disabled> <NFLTeamTwo/> {secondTeam}</Button>)
+            console.log()
+            arrButtons.push(<Button key={i+1} variant="outline-secondary" className="pick-select-button" disabled> <NFLTeamTwo/> {secondTeam}</Button>)
         } else if((activePage < CurrentWeekNum() || !eligibility) && currKey !== secondTeam) {
-            arrButtons.push(<Button variant={buttonColor} className="pick-select-button" disabled> <NFLTeamTwo/> {secondTeam}</Button>)
+            arrButtons.push(<Button key={i+1} variant={buttonColor} className="pick-select-button" disabled> <NFLTeamTwo/> {secondTeam}</Button>)
         } else if(activePage < CurrentWeekNum() && currKey === secondTeam) {
-            arrButtons.push(<Button variant={buttonColor} className="pick-select-button" active> <NFLTeamTwo/> {secondTeam}</Button>)
+            arrButtons.push(<Button key={i+1} variant={buttonColor} className="pick-select-button" active> <NFLTeamTwo/> {secondTeam}</Button>)
         } else if(isSecondTeamPicked && currKey !== secondTeam) {
-            arrButtons.push(<Button variant="outline-secondary" className="pick-select-button" disabled> <NFLTeamTwo/> {secondTeam}</Button>)
+            arrButtons.push(<Button key={i+1} variant="outline-secondary" className="pick-select-button" disabled> <NFLTeamTwo/> {secondTeam}</Button>)
         } else if (secondTeam !== currKey) {
-            arrButtons.push(<Button variant="outline-primary" className="pick-select-button" active={(activeButtonArr[activePage-1][i+1] === null) ? false : activeButtonArr[activePage-1][i+1]} onClick={(event)=>handleTeamChosen(event,i+1)}> <NFLTeamTwo/> {secondTeam} </Button>)
+            arrButtons.push(<Button key={i+1} variant="outline-primary" className="pick-select-button" active={(activeButtonArr[activePage-1][i+1] === null) ? false : activeButtonArr[activePage-1][i+1]} onClick={(event)=>handleTeamChosen(event,i+1)}> <NFLTeamTwo/> {secondTeam} </Button>)
         } else {
-            arrButtons.push(<Button variant="outline-primary" className="pick-select-button" active={(activeButtonArr[activePage-1][i+1] === null) ? true : activeButtonArr[activePage-1][i+1]} onClick={(event)=>handleTeamChosen(event,i+1)}> <NFLTeamTwo/> {secondTeam} </Button>)
+            arrButtons.push(<Button key={i+1} variant={buttonColor} className="pick-select-button" active={(activeButtonArr[activePage-1][i+1] === null) ? true : activeButtonArr[activePage-1][i+1]} onClick={(event)=>handleTeamChosen(event,i+1)}> <NFLTeamTwo/> {secondTeam} </Button>)
         }
     }
 

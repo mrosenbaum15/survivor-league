@@ -1,0 +1,5 @@
+.standings-modal-section {
+    position: absolute;
+    margin-top: 200px;
+    z-index: 1;
+}

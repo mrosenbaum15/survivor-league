@@ -66,32 +66,27 @@ function CurrentWeek() {
             else teamToUser[currTeam] = [currUser]
         }
 
+        console.log(teamToUser);
+
         let maxCount = -1;
         let currLength;
-        let finalSet = false;
-        let finalTeam;
         Object.keys(teamToUser).map((team, i) => {
+            console.log(team);
             currLength = teamToUser[team].length;
-            finalSet = false;
             if(maxCount == -1) {
                 maxCount = currLength;
                 sortedPicks = [[team, currLength,teamToUser[team]]];
-                finalSet = true;
             }
             else if(currLength > maxCount) {
                 maxCount = currLength;
                 sortedPicks.splice(i-1, 0, [team, currLength,teamToUser[team]]);
-                finalSet = true;
+            } else {
+                sortedPicks.push([team, currLength,teamToUser[team]]);
             }
-
-            finalTeam = team;
 
         });
 
-        if(teamToUser[finalTeam].length && !finalSet) {
-            sortedPicks.push([finalTeam, teamToUser[finalTeam].length, teamToUser[finalTeam]]);
-        }
-
+        console.log(sortedPicks);
         setSelections(sortedPicks);
     }
 
@@ -161,6 +156,7 @@ function CurrentWeek() {
         )
     }
 
+
     return (
         <>
             <div className='current-week-section'>
@@ -179,9 +175,9 @@ function CurrentWeek() {
                                     let NFLTeam = teamIcons[selections[val][0]];
                                     return (
                                         <tr>
-                                            <td> {selections[val][1]}</td>
-                                            <td> <NFLTeam/> </td>
-                                            <td>
+                                            <td className='current-week-table-td'> {selections[val][1]}</td>
+                                            <td className='current-week-table-td'> <NFLTeam/> </td>
+                                            <td className='current-week-table-td'>
                                                 {
                                                     selections[val][2]
                                                     ? selections[val][2].join(", ")

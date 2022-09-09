@@ -21,7 +21,7 @@ function Rules() {
     return (
         <>
             <div className='rules-main-section'>
-                <div className='individual-rule-card'>
+                <div className='individual-rule-card-section'>
                 <Card style={{ height: '20rem', width: '18rem' }}>
                     <Card.Header><b>Entry Fee</b></Card.Header>
                             <ListGroup variant="flush">
@@ -32,7 +32,7 @@ function Rules() {
                     </Card>
                 </div>
                 
-                <div className='individual-rule-card'>
+                <div className='individual-rule-card-section'>
                     <Card style={{ height: '20rem', width: '18rem' }}>
                         <Card.Header><b>Payouts</b></Card.Header>
                             <ListGroup variant="flush">
@@ -45,7 +45,7 @@ function Rules() {
                     </Card>
                 </div>
 
-                <div className='individual-rule-card'>
+                <div className='individual-rule-card-section'>
                 <Card style={{ height: '20rem', width: '18rem' }}>
                     <Card.Header><b>Picking</b></Card.Header>
                             <ListGroup variant="flush">
@@ -57,7 +57,7 @@ function Rules() {
                     </Card>
                 </div>    
 
-                <div className='individual-rule-card'>
+                <div className='individual-rule-card-section'>
                 <Card style={{ height: '20rem', width: '18rem' }}>
                         <Card.Header><b>Results</b></Card.Header>
                             <ListGroup variant="flush">
