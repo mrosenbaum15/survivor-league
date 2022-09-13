@@ -139,7 +139,6 @@ function EnterPicks() {
             if(iconText === undefined) {
                 // newTeamSelectedArr[activePage-1] = false;
                 // setIsTeamSelectedArr(newTeamSelectedArr);
-                console.log("UNDEFINED");
                 return;
             }
             buttonText = iconText;
@@ -284,7 +283,6 @@ function EnterPicks() {
         );
 
         if((activePage < CurrentWeekNum() || !eligibility) && currKey !== secondTeam) {
-            console.log()
             arrButtons.push(<Button key={i+1} variant="outline-secondary" className="pick-select-button" disabled> <NFLTeamTwo/> {secondTeam}</Button>)
         } else if((activePage < CurrentWeekNum() || !eligibility) && currKey !== secondTeam) {
             arrButtons.push(<Button key={i+1} variant={buttonColor} className="pick-select-button" disabled> <NFLTeamTwo/> {secondTeam}</Button>)
@@ -333,7 +331,7 @@ function EnterPicks() {
                                 {/* <Button type="submit" disabled={!isTeamSelectedArr[activePage-1]}> Submit </Button> */}
                                 {
                                     showSubmitButton
-                                        ? <Button type="submit" active={PickEligibility(activePage, "normal")}> Submit </Button>
+                                        ? <Button type="submit" disabled={!PickEligibility(activePage, "normal")}> Submit </Button>
                                         : ""
                                 }
                                     

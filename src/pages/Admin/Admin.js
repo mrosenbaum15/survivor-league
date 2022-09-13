@@ -80,7 +80,7 @@ function Admin() {
                 }
             }
         ).then((response) => {
-            // window.location.reload();
+            window.location.reload();
         }).catch((error) => {
             console.log(error); 
             alert("Unable to submit results.");

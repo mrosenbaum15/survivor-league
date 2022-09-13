@@ -87,6 +87,7 @@ function Standings() {
         let secondTier = "";
         let val;
 
+        let firstTierLen = 0;
         for(let i = 0; i < currStreakArr.length; i++) {                
             val = currStreakArr[i];
             currUser = Object.keys(val)[0];
@@ -94,12 +95,17 @@ function Standings() {
             if(currStreak > highScore) {
                 firstTier = (firstTier === "") ? firstTier + currUser : firstTier + ", " + currUser;
                 highScore = currStreak;
+                firstTierLen = 1;
             } else if(currStreak === highScore && tierNum === 1) {
                 firstTier = (firstTier === "") ? firstTier + currUser : firstTier + ", " + currUser;
-            } else if(currStreak < highScore && tierNum === 1) {
+                firstTierLen++;
+            } else if(currStreak < highScore && tierNum === 1 && firstTierLen === 1) {
                 secondTier = (secondTier === "") ? secondTier + currUser : secondTier + ", " + currUser;
                 highScore = currStreak;
-                tierNum = 2; 
+                tierNum = 2;
+            } else if(currStreak < highScore && tierNum === 1 && firstTierLen > 1) {
+                secondTier = firstTier;
+                break;
             } else if(currStreak === highScore && tierNum === 2) {
                 secondTier = (secondTier === "") ? secondTier + currUser : secondTier + ", " + currUser;                
             }
@@ -147,10 +153,10 @@ function Standings() {
             let numSecondMostCommas = 1 + (secondTierMostStreak.match(/,/g) || []).length;
 
             setPayoutsArr([
-                "Longest Start Streak: " + firstTierStartStreak + " ($" +  (firstPayout / numFirstStartCommas).toFixed(2).toString() + ")",
-                "Second Longest Start Streak: " + secondTierStartStreak + " ($" +  (secondLongestPayout / numSecondStartCommas).toFixed(2).toString() + ")",
-                "Most Correct: " + firstTierMostStreak + " ($" +  (mostPayout / numFirstMostCommas).toFixed(2).toString() + ")",
-                "Second Most Correct: " + secondTierMostStreak + " ($" +  (secondLongestPayout / numSecondMostCommas).toFixed(2).toString() + ")"
+                "Longest Start Streak: " + firstTierStartStreak + " ($" +  (firstPayout / numFirstStartCommas).toFixed(2).toString() + " each)",
+                "Second Longest Start Streak: " + secondTierStartStreak + " ($" +  (secondLongestPayout / numSecondStartCommas).toFixed(2).toString() + " each)",
+                "Most Correct: " + firstTierMostStreak + " ($" +  (mostPayout / numFirstMostCommas).toFixed(2).toString() + " each)",
+                "Second Most Correct: " + secondTierMostStreak + " ($" +  (secondLongestPayout / numSecondMostCommas).toFixed(2).toString() + " each)"
             ]);            
       }, [standings]);
 

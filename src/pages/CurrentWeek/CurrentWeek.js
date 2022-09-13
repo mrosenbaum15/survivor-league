@@ -62,35 +62,40 @@ function CurrentWeek() {
 
             if(currTeam.includes("Team")) continue;
 
+            console.log(teamToUser[currTeam]);
+
             if(teamToUser[currTeam]) teamToUser[currTeam].push(currUser)
             else teamToUser[currTeam] = [currUser]
         }
 
-        console.log(teamToUser);
-
         let maxCount = -1;
         let currLength;
+        
         Object.keys(teamToUser).map((team, i) => {
-            console.log(team);
             currLength = teamToUser[team].length;
-            if(maxCount == -1) {
+
+            if(sortedPicks.length < 1) {
                 maxCount = currLength;
                 sortedPicks = [[team, currLength,teamToUser[team]]];
             }
-            else if(currLength > maxCount) {
-                maxCount = currLength;
-                sortedPicks.splice(i-1, 0, [team, currLength,teamToUser[team]]);
-            } else {
-                sortedPicks.push([team, currLength,teamToUser[team]]);
+
+
+            for(let j = 1; j <= i; j++) {
+                if(currLength > sortedPicks[j-1][1]) {
+                    maxCount = currLength;
+                    sortedPicks.splice(j-1, 0, [team, currLength,teamToUser[team]]);
+                } else if(j == i) {
+                    sortedPicks.push([team, currLength,teamToUser[team]]);
+                }
             }
 
         });
 
-        console.log(sortedPicks);
         setSelections(sortedPicks);
     }
 
     function getAllPicks(weekNum) {
+        console.log(weekNum);
         if(PickEligibility(weekNum, (weekNum !== 16) ? 'normal' : 'normal_christmas')) {
             alert("Games will be available after 12pm CST kickoff");
             return;

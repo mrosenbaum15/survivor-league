@@ -22,7 +22,7 @@ function Rules() {
         <>
             <div className='rules-main-section'>
                 <div className='individual-rule-card-section'>
-                <Card style={{ height: '20rem', width: '18rem' }}>
+                <Card style={{ height: '22rem', width: '18rem' }}>
                     <Card.Header><b>Entry Fee</b></Card.Header>
                             <ListGroup variant="flush">
                              <ListGroup.Item>A. Venmo <span className='money'> $25 </span> to <b>@mrosenbaum15</b> </ListGroup.Item>
@@ -33,20 +33,20 @@ function Rules() {
                 </div>
                 
                 <div className='individual-rule-card-section'>
-                    <Card style={{ height: '20rem', width: '18rem' }}>
+                    <Card style={{ height: '22rem', width: '18rem' }}>
                         <Card.Header><b>Payouts</b></Card.Header>
                             <ListGroup variant="flush">
                              <ListGroup.Item>53% to longest start streak</ListGroup.Item>
                              <ListGroup.Item>25% to most correct in total</ListGroup.Item>
                              <ListGroup.Item>11% to second longest start streak</ListGroup.Item>
                              <ListGroup.Item>11% to second most correct in totalk</ListGroup.Item>
-                             <ListGroup.Item>Payouts in each tier are split for ties</ListGroup.Item>
+                             <ListGroup.Item>Payouts in each tier are split for ties (if two people tie for first, they will split the pot for the top two tiers)</ListGroup.Item>
                         </ListGroup>
                     </Card>
                 </div>
 
                 <div className='individual-rule-card-section'>
-                <Card style={{ height: '20rem', width: '18rem' }}>
+                <Card style={{ height: '22rem', width: '18rem' }}>
                     <Card.Header><b>Picking</b></Card.Header>
                             <ListGroup variant="flush">
                              <ListGroup.Item>Deadline: 12pm CST on Sundays</ListGroup.Item>
@@ -58,7 +58,7 @@ function Rules() {
                 </div>    
 
                 <div className='individual-rule-card-section'>
-                <Card style={{ height: '20rem', width: '18rem' }}>
+                <Card style={{ height: '22rem', width: '18rem' }}>
                         <Card.Header><b>Results</b></Card.Header>
                             <ListGroup variant="flush">
                             <ListGroup.Item>A correct pick occurs ONLY when a team wins the game</ListGroup.Item>
