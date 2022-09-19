@@ -45,24 +45,18 @@ function CurrentWeek() {
         
       }, []);
 
-    function showUserInfoModal(event) {
-        let username = event.target.innerText.split('\n')[0];
-        // getUserInfo(username);
-    }      
-
     function sortPicks(picks) {
         let teamToUser = {};
         let sortedPicks = [];
 
         let currVal; let currTeam; let currUser;
+        let teamsStr = "";
         for(let i = 0; i < picks.length; i++) {
             currVal = picks[i];
             currTeam = Object.keys(Object.values(currVal)[0])[0];
             currUser = Object.keys(currVal)[0];
 
             if(currTeam.includes("Team")) continue;
-
-            console.log(teamToUser[currTeam]);
 
             if(teamToUser[currTeam]) teamToUser[currTeam].push(currUser)
             else teamToUser[currTeam] = [currUser]
@@ -79,23 +73,22 @@ function CurrentWeek() {
                 sortedPicks = [[team, currLength,teamToUser[team]]];
             }
 
-
             for(let j = 1; j <= i; j++) {
                 if(currLength > sortedPicks[j-1][1]) {
                     maxCount = currLength;
                     sortedPicks.splice(j-1, 0, [team, currLength,teamToUser[team]]);
+                    break;
                 } else if(j == i) {
                     sortedPicks.push([team, currLength,teamToUser[team]]);
+                    teamsStr += team;
                 }
             }
 
         });
-
         setSelections(sortedPicks);
     }
 
     function getAllPicks(weekNum) {
-        console.log(weekNum);
         if(PickEligibility(weekNum, (weekNum !== 16) ? 'normal' : 'normal_christmas')) {
             alert("Games will be available after 12pm CST kickoff");
             return;
@@ -108,7 +101,8 @@ function CurrentWeek() {
             },
             params: {'week_num': weekNum}
         }).then((response) => {
-            sortPicks(response["data"]);
+            if("see_users" in response["data"]) setWeekIsAvailable(false)
+            else sortPicks(response["data"]);
         }).catch((error) => {
             console.log(error); 
             alert("Unable to get picks for this week. Refresh the page and try again.");
