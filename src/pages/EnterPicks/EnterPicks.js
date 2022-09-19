@@ -269,18 +269,17 @@ function EnterPicks() {
             } else if((activePage < CurrentWeekNum() || !eligibility) && currKey !== firstTeam) {
                 arrButtons.push(<Button key={i} variant={buttonColor} className="pick-select-button" disabled> <NFLTeamOne/>{firstTeam}</Button>)
             } else if(activePage < CurrentWeekNum() && currKey === firstTeam) {
+                console.log("Active with team: " + firstTeam);
                 arrButtons.push(<Button key={i} variant={buttonColor} className="pick-select-button" active> <NFLTeamOne/> {firstTeam}</Button>)
             } else if(isFirstTeamPicked && currKey !== firstTeam) {
                 arrButtons.push(<Button key={i} variant="outline-secondary" className="pick-select-button" disabled> <NFLTeamOne/>{firstTeam}</Button>)
             } else if (firstTeam !== currKey) {
                 arrButtons.push(<Button key={i} variant="outline-primary" className="pick-select-button" active={(activeButtonArr[activePage-1][i] === null) ? false : activeButtonArr[activePage-1][i]} onClick={(event)=>handleTeamChosen(event,i)}> <NFLTeamOne/> {firstTeam} </Button>)
+            } else if(!eligibility) {
+                arrButtons.push(<Button key={i} variant={buttonColor} className="pick-select-button" active={true}> <NFLTeamOne/> {firstTeam} </Button>)
             } else {
                 arrButtons.push(<Button key={i} variant={buttonColor} className="pick-select-button" active={(activeButtonArr[activePage-1][i] === null) ? true : activeButtonArr[activePage-1][i]} onClick={(event)=>handleTeamChosen(event,i)}> <NFLTeamOne/> {firstTeam} </Button>)
             }
-    
-            arrButtons.push(
-                // <p className='at-gap-section'> at </p>
-            );
     
             if((activePage < CurrentWeekNum() || !eligibility) && currKey !== secondTeam) {
                 arrButtons.push(<Button key={i+1} variant="outline-secondary" className="pick-select-button" disabled> <NFLTeamTwo/> {secondTeam}</Button>)
@@ -292,6 +291,8 @@ function EnterPicks() {
                 arrButtons.push(<Button key={i+1} variant="outline-secondary" className="pick-select-button" disabled> <NFLTeamTwo/> {secondTeam}</Button>)
             } else if (secondTeam !== currKey) {
                 arrButtons.push(<Button key={i+1} variant="outline-primary" className="pick-select-button" active={(activeButtonArr[activePage-1][i+1] === null) ? false : activeButtonArr[activePage-1][i+1]} onClick={(event)=>handleTeamChosen(event,i+1)}> <NFLTeamTwo/> {secondTeam} </Button>)
+            } else if(!eligibility) {
+                arrButtons.push(<Button key={i+1} variant={buttonColor} className="pick-select-button" active={true}> <NFLTeamTwo/> {secondTeam} </Button>)
             } else {
                 arrButtons.push(<Button key={i+1} variant={buttonColor} className="pick-select-button" active={(activeButtonArr[activePage-1][i+1] === null) ? true : activeButtonArr[activePage-1][i+1]} onClick={(event)=>handleTeamChosen(event,i+1)}> <NFLTeamTwo/> {secondTeam} </Button>)
             }
