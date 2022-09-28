@@ -15,7 +15,7 @@ function Admin() {
 
     // API - current week of season
     const [activePage, setActivePage] = useState(CurrentWeekNum());
-    const [currMatchups, setCurrMatchups] = useState([]);
+    const [showSubmitButton, setShowSubmitButton] = useState(false);
 
     const [matchupsArr, setMatchupsArr] = useState([[]]);
     const [resultsArr, setResultsArr] = useState([[]]);
@@ -36,9 +36,11 @@ function Admin() {
             headers: {
                 Authorization: newSession['idToken']['jwtToken'],
                 'Content-Type': 'application/json'
-            }
+            },
+            params: {'username': ''}
         }).then((response) => {
-            setMatchupsArr(response["data"]["matchups"])
+            setMatchupsArr(response["data"]["matchups"]);
+            setShowSubmitButton(true);
         }).catch((error) => {
             console.log(error); 
             alert("Unable to get matchups. Try refreshing page and trying again.");
@@ -232,11 +234,19 @@ function Admin() {
                                     {arrButtons}
                                 {/* </div> */}
                                 <p className='breaker'/>
-                                <Button className="admin-submit" type="submit"> Submit </Button>
+                                {
+                                    showSubmitButton
+                                        ? <Button className="admin-submit" type="submit"> Submit </Button>
+                                        : ""
+                                }                                
                             </ButtonGroup>
                         </ButtonToolbar>
                     </Form>
-                    <Pagination className='pagination-admin'>{items}</Pagination>
+                    {
+                        showSubmitButton
+                         ? <Pagination className='pagination-admin'>{items}</Pagination>
+                         : ""
+                    }
                 </div>
             </div>
         </>

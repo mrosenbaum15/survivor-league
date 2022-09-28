@@ -9,6 +9,7 @@ import teamIcons from './../../utils/teamIcons';
 import { AccountContext } from './../../components/UserPool/Account';
 import PastPicksCard from '../../components/PastPicksCard/PastPicksCard';
 import DeadlineTooltip from '../../components/DeadlineTooltip/DeadlineTooltip';
+import { Lock } from 'react-bootstrap-icons';
 
 // API article https://medium.com/swlh/skip-lambda-save-data-to-dynamodb-directly-using-api-gateway-process-later-with-streams-dab2ceef9a9d
 function EnterPicks() {
@@ -24,6 +25,7 @@ function EnterPicks() {
     // API - current week of season
     const [activePage, setActivePage] = useState(CurrentWeekNum());
 
+    const [locked, setLocked] = useState(Array(18).fill(true));
     const [matchupsArr, setMatchupsArr] = useState([[]]);
     const [deadlinesArr, setDeadlinesArr] = useState([[]]);
     const [showSubmitButton, setShowSubmitButton] = useState(false);
@@ -61,8 +63,10 @@ function EnterPicks() {
             headers: {
                 Authorization: newSession['idToken']['jwtToken'],
                 'Content-Type': 'application/json'
-            }
+            },
+            params: {'username': newSession['accessToken']['payload']['username']}
         }).then((response) => {
+            setLocked(response["data"]["locked"]);
             setMatchupsArr(response["data"]["matchups"]);
             setDeadlinesArr(response["data"]["deadlines"]);
             setShowSubmitButton(true);
@@ -105,8 +109,9 @@ function EnterPicks() {
         ).then((response) => {
             window.location.reload();
         }).catch((error) => {
-            console.log(error); 
-            alert("Unable to submit pick. Please text 847-630-2489 to submit.");
+            console.log(error);
+            if(error["response"]["status"] == 403) alert("The deadline has passed for this week and your pick cannot be submitted.");
+            else alert("Unable to submit pick. Please text 847-630-2489 to submit.");
         });
 
     }
@@ -166,6 +171,7 @@ function EnterPicks() {
 
     // TO-DO check if deadline past. Make objects non-selectable/submittable
     let arrButtons = [];
+    let weeklyButtons = [];
     let firstTeam = "";
     let secondTeam = "";
     let isFirstTeamPicked;
@@ -177,7 +183,7 @@ function EnterPicks() {
     let prevDeadline = "";
     let eligibility;
 
-    if(matchupsArr.length > 1 && userPicks.length > 1) {
+    if(!locked[activePage-1] && matchupsArr.length > 1 && userPicks.length > 1) {
         for (let i = 0; i < matchupsArr[activePage-1].length * 2; i+=2) { 
             firstTeam = matchupsArr[activePage-1][i/2].split(' ')[0];
             secondTeam = matchupsArr[activePage-1][i/2].split(' ')[2];
@@ -245,7 +251,7 @@ function EnterPicks() {
                     )
                 } else if(currDeadline === 'london'){
                     arrButtons.push(
-                        <span key={i+'-span'} lassName={'game-day-header'}> Sunday AM in London </span>
+                        <span key={i+'-span'} className={'game-day-header'}> Sunday AM in London </span>
                     )
                 } else if(currDeadline === 'thanksgiving_morning') {
                     arrButtons.push(
@@ -269,7 +275,6 @@ function EnterPicks() {
             } else if((activePage < CurrentWeekNum() || !eligibility) && currKey !== firstTeam) {
                 arrButtons.push(<Button key={i} variant={buttonColor} className="pick-select-button" disabled> <NFLTeamOne/>{firstTeam}</Button>)
             } else if(activePage < CurrentWeekNum() && currKey === firstTeam) {
-                console.log("Active with team: " + firstTeam);
                 arrButtons.push(<Button key={i} variant={buttonColor} className="pick-select-button" active> <NFLTeamOne/> {firstTeam}</Button>)
             } else if(isFirstTeamPicked && currKey !== firstTeam) {
                 arrButtons.push(<Button key={i} variant="outline-secondary" className="pick-select-button" disabled> <NFLTeamOne/>{firstTeam}</Button>)
@@ -296,6 +301,32 @@ function EnterPicks() {
             } else {
                 arrButtons.push(<Button key={i+1} variant={buttonColor} className="pick-select-button" active={(activeButtonArr[activePage-1][i+1] === null) ? true : activeButtonArr[activePage-1][i+1]} onClick={(event)=>handleTeamChosen(event,i+1)}> <NFLTeamTwo/> {secondTeam} </Button>)
             }
+        }
+    }
+
+    else if(locked[activePage-1] && matchupsArr.length > 1 && userPicks.length > 1) {
+        let team = Object.keys(userPicks[activePage-1])[0];
+
+        if(team.includes("Team")) {
+            weeklyButtons.push(
+                <div key={activePage+'-locked'}className='locked-pick-section'>
+                    <Lock className="locked-tooltip-icon" />
+                    Your pick is locked for Week {activePage}: None
+                </div>
+            )
+        } else {
+            var NFLTeam = teamIcons[Object.keys(userPicks[activePage-1])[0]];
+
+            weeklyButtons.push(
+                <div key={activePage+'-locked'}className='locked-pick-section'>
+                    <Lock className="locked-tooltip-icon" />
+                    Your pick is locked for Week {activePage}:
+                    <span className='locked-pick-offset'>
+                        <NFLTeam/>
+                    </span>
+                        
+                </div>
+            )
         }
     }
     
@@ -333,7 +364,7 @@ function EnterPicks() {
                                 <p className='breaker'/>
                                 {/* <Button type="submit" disabled={!isTeamSelectedArr[activePage-1]}> Submit </Button> */}
                                 {
-                                    showSubmitButton
+                                    !locked[activePage-1]
                                         ? <Button type="submit" disabled={!PickEligibility(activePage, "normal")}> Submit </Button>
                                         : ""
                                 }
@@ -341,7 +372,9 @@ function EnterPicks() {
                             </ButtonGroup>
                         </ButtonToolbar>
                     </Form>
-                    
+                    {
+                        weeklyButtons
+                    }
                     {
                          showSubmitButton
                          ? <Pagination className='pagination-enter-picks'>{items}</Pagination>

@@ -58,3 +58,21 @@ button.transparent-btn {
     justify-content: center;
     margin-bottom: 25px;
 }
+
+.locked-pick-section {
+    position: relative;
+    bottom: 50px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.locked-tooltip-icon {
+    font-size: 25px;
+    color: black;
+}   
+
+.locked-pick-offset {
+    position: relative;
+    top: -7.5px;
+}
