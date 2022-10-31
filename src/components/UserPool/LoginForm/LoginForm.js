@@ -8,6 +8,7 @@ function LoginForm({
     setUsername,
     setPassword,
     changeAuthMode,
+    setForgotPassword,
     handleLogin
 }) {
 
@@ -28,7 +29,7 @@ function LoginForm({
                     <Form.Control value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder="Password" />
                 </Form.Group>
                 <div>
-                    Don't have an account?  
+                    <Button className='anchor-button' onClick={setForgotPassword}>Forgot Password </Button>
                     <Button className='anchor-button' onClick={changeAuthMode}>Sign up</Button>
                 </div>
                     

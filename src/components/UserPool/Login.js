@@ -8,12 +8,15 @@ import LoginForm from './LoginForm/LoginForm';
 import RegisterForm from './RegisterForm/RegisterForm'
 import VerifyAccountForm from './VerifyAccountForm/VerifyAccountForm'
 import './styles/login.css';
+import ResetPasswordForm from './ResetPasswordForm/ResetPasswordForm';
 
 
 function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  
+  const [forgotUser, setForgotUser] = useState('');
+  const [forgotPasswordVal, setForgotPasswordVal] = useState('');
+
   const [newName, setNewName] = useState('');
   const [newUsername, setNewUsername] = useState('');
   const [newEmail, setNewEmail] = useState('');
@@ -24,7 +27,9 @@ function Login() {
   const [newSession, setNewSession] = useState(undefined);
   const [verifyProcess, setVerifyProcess] = useState(false);
   const [confirmationCode, setConfirmationCode] = useState('');
-
+  const [forgotPassword, setForgotPassword] = useState(false);
+  const [enterUsername, setEnterUsername] = useState(true);
+  const [isUsernameValid, setIsUsernameValid] = useState(true);
 
   const [status, setStatus] = useState(false);
   const { authenticate, getSession, logout } = useContext(AccountContext);
@@ -121,6 +126,49 @@ function Login() {
     });
   };
 
+  const handleForgotPassword = (e) => {
+    e.preventDefault();
+    const user = new CognitoUser({
+      Username: forgotUser,
+      Pool: UserPool,
+    });
+    user.confirmPassword(confirmationCode, forgotPasswordVal, {
+        onSuccess: () => {
+          alert('Password reset successfully');
+          window.location.href = '/login';
+        },
+        onFailure: (err) => {
+          console.log(err);
+          alert("Couldn't send verification code. Please make sure all fields are filled out and password has at least 8 characters, including uppercase and lowercase letters, a number and a special character. If you have tried more than 3 times, please wait 15 minutes and try again.");
+        }
+      }
+    );
+  };  
+
+  const sendConfirmationCode = (e) =>  {
+    if(forgotUser.length < 1) {
+      setIsUsernameValid(false);
+      return;
+    }
+
+    e.preventDefault();
+    const user = new CognitoUser({
+      Username: forgotUser,
+      Pool: UserPool,
+    });
+    user.forgotPassword(
+      {
+        onSuccess: () => {
+          console.log()
+          setEnterUsername(false);
+        },
+        onFailure: (err) => {
+          alert("Couldn't send verification code. Please refresh and try again.");
+        },
+      }
+    );
+  }
+
   if(authMode === 'signup') {
     return (
       <>
@@ -142,37 +190,73 @@ function Login() {
       )
     }
 
-    if(verifyProcess) {
-      return (
-        <VerifyAccountForm
-          confirmationCode={confirmationCode}
-          setConfirmationCode={setConfirmationCode}
-          handleVerify={handleVerify}
-        />
-      )
-    }
-    
-    if(!status) {
-      return (
-            <LoginForm
-              username={username}
-              password={password}
-              setUsername={setUsername}
-              setPassword={setPassword}
-              changeAuthMode={changeAuthMode}
-              handleLogin={handleLogin}
-            />
-
-      );
-    }
-    
-    let welcomeText = newSession ? newSession['idToken']['payload']['name'] : 'unknown user';
+  if(verifyProcess) {
     return (
-      <div className='logged-in-section'>
-          Hello, {welcomeText}
-          <Button className='logout-button' onClick={logout}>Logout</Button>
-      </div>
+      <VerifyAccountForm
+        confirmationCode={confirmationCode}
+        setConfirmationCode={setConfirmationCode}
+        handleVerify={handleVerify}
+        isValid={true}
+        formCaption={'A confirmation code has been sent to ' + newEmail}
+        formPlaceholder='Enter confirmation code'
+        submitCaption='Verify'
+      />
     )
+  }
+
+  // enter  email to prompt for confirmation code
+  if(forgotPassword && enterUsername) {
+    return (
+      <VerifyAccountForm
+        confirmationCode={forgotUser}
+        setConfirmationCode={setForgotUser}
+        handleVerify={sendConfirmationCode}
+        isValid={isUsernameValid}
+        formCaption='Username'
+        formPlaceholder='Enter username'
+        submitCaption='Submit'
+      />
+    )
+  }
+
+  // enter confirmation code
+  if(forgotPassword && !enterUsername) {
+    return (
+      <ResetPasswordForm
+        confirmationCode={confirmationCode}
+        setConfirmationCode={setConfirmationCode}
+        setNewPassword={setForgotPasswordVal}
+        handleVerify={handleForgotPassword}
+        isValid={true}
+        formCaption={'A confirmation code has been sent to ' + forgotUser +'\'s email'}
+        formPlaceholder='Enter confirmation code'
+        submitCaption='Submit'
+      />
+    )
+  }
+  
+  if(!status) {
+    return (
+          <LoginForm
+            username={username}
+            password={password}
+            setUsername={setUsername}
+            setPassword={setPassword}
+            changeAuthMode={changeAuthMode}
+            setForgotPassword={setForgotPassword}
+            handleLogin={handleLogin}
+          />
+
+    );
+  }
+  
+  let welcomeText = newSession ? newSession['idToken']['payload']['name'] : 'unknown user';
+  return (
+    <div className='logged-in-section'>
+        Hello, {welcomeText}
+        <Button className='logout-button' onClick={logout}>Logout</Button>
+    </div>
+  )
 }
 
 export default Login;

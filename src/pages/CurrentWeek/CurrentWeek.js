@@ -101,7 +101,7 @@ function CurrentWeek() {
             },
             params: {'week_num': weekNum}
         }).then((response) => {
-            if("see_users" in response["data"]) setWeekIsAvailable(false)
+            if("access_denied" in response["data"]) setWeekIsAvailable(false)
             else sortPicks(response["data"]);
         }).catch((error) => {
             console.log(error); 

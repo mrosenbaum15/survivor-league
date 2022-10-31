@@ -119,6 +119,7 @@ function EnterPicks() {
 
       useEffect(() => {
         if(newSession !== undefined) {
+            console.log(newSession);
             getAllMatchups();
             getUserPicks();
         }
