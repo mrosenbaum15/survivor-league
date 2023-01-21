@@ -3,4 +3,5 @@
     margin-top: 100px;
     z-index: 1;
     overflow-y: scroll !important;
+    max-height: 500px;
 }

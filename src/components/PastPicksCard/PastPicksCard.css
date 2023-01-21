@@ -26,6 +26,6 @@
 .past-picks-list-group-items {
     border: 1px solid rgba(0,0,0,.125) !important;
     border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0 !important;
-    width: 6rem;
+    width: 6.3rem;
     height: 6rem;
 }

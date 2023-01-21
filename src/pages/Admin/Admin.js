@@ -39,8 +39,8 @@ function Admin() {
             },
             params: {'username': ''}
         }).then((response) => {
-            setShowSubmitButton(true);
             setMatchupsArr(response["data"]["matchups"]);
+            setShowSubmitButton(true);
         }).catch((error) => {
             console.log(error); 
             alert("Unable to get matchups. Try refreshing page and trying again.");

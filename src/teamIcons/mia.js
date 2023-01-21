@@ -10,7 +10,7 @@ const MIA = props => {
       preserveAspectRatio="xMidYMid slice"
       clipRule="evenodd"
       fillRule="evenodd"
-      viewBox="0 0 560 400"
+      viewBox="0 60 600 300"
       xmlns="http://www.w3.org/2000/svg"
       id="Dolphins"
     >

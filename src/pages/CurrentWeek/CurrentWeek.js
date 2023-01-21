@@ -52,15 +52,19 @@ function CurrentWeek() {
         let currVal; let currTeam; let currUser;
         let teamsStr = "";
         for(let i = 0; i < picks.length; i++) {
+            console.log(picks);
             currVal = picks[i];
             currTeam = Object.keys(Object.values(currVal)[0])[0];
             currUser = Object.keys(currVal)[0];
 
-            if(currTeam.includes("Team")) continue;
+            // this is for adding a section for users who did not pick
+            if(currTeam.includes("Team")) currTeam = "N/A"
 
             if(teamToUser[currTeam]) teamToUser[currTeam].push(currUser)
             else teamToUser[currTeam] = [currUser]
         }
+
+        console.log(teamToUser);
 
         let maxCount = -1;
         let currLength;
@@ -74,13 +78,17 @@ function CurrentWeek() {
             }
 
             for(let j = 1; j <= i; j++) {
-                if(currLength > sortedPicks[j-1][1]) {
+                console.log(team)
+                if (team === "N/A") {
+                    sortedPicks.push([team, currLength,teamToUser[team]]);
+                    break;
+                }
+                else if(currLength > sortedPicks[j-1][1] || sortedPicks[j-1][0] === "N/A") {
                     maxCount = currLength;
                     sortedPicks.splice(j-1, 0, [team, currLength,teamToUser[team]]);
                     break;
                 } else if(j == i) {
                     sortedPicks.push([team, currLength,teamToUser[team]]);
-                    teamsStr += team;
                 }
             }
 
@@ -171,6 +179,23 @@ function CurrentWeek() {
                         {
                             selections && selections.length
                                 ? Object.keys(selections).map((val, i) => {
+                                    console.log(selections[val][0])
+                                    if(selections[val][0] == "N/A") {
+                                        return (
+                                            <tr>
+                                                <td className='current-week-table-td'> {selections[val][1]}</td>
+                                                <td className='current-week-table-td'> - </td>
+                                                <td className='current-week-table-td'>
+                                                    {
+                                                        selections[val][2]
+                                                        ? selections[val][2].join(", ")
+                                                        : ""
+                                                    }
+                                                </td>
+                                            </tr>
+                                        )
+                                    }
+
                                     let NFLTeam = teamIcons[selections[val][0]];
                                     return (
                                         <tr>

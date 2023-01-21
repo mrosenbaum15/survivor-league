@@ -64,7 +64,7 @@ function GetTargetDate(weekNum, deadline) {
             break;
         } else if((deadline === 'tnf' || deadline.includes("thanksgiving")) && startDate.getDay() === 4) {
             break;
-        } else if(weekNum === 16 && startDate.getDay() === 6) {
+        } else if((weekNum === 16 || deadline.includes('saturday')) && startDate.getDay() === 6) {
             break;
         }
         startDate.setDate(startDate.getDate() + 1);

@@ -212,7 +212,7 @@ function EnterPicks() {
             }
     
             currDeadline = deadlinesArr.length > 1 ? deadlinesArr[activePage-1][i/2] : "";
-    
+            // TODO: clean up code and find way to return span and clean up code
             if(currDeadline !== prevDeadline) {
                 if(currDeadline === 'tnf') {
                     arrButtons.push(
@@ -222,15 +222,15 @@ function EnterPicks() {
                     arrButtons.push(
                         <span key={i+'-span'} className={'game-day-header'}> Christmas </span>
                     )
-                } else if(activePage === 16 && currDeadline === "normal"){
+                } else if((activePage === 16 && currDeadline === "normal") || (currDeadline === "saturday_morning")){
                     arrButtons.push(
                         <span key={i+'-span'} className={'game-day-header'}> Saturday Early Afternoon</span>
                     )
-                } else if(activePage === 16 && currDeadline === "normal_afternoon"){
+                } else if((activePage === 16 && currDeadline === "normal_afternoon") || (currDeadline === "saturday_afternoon")){ // TODO: improve saturday logic for next year
                     arrButtons.push(
                         <span key={i+'-span'} className={'game-day-header'}> Saturday Late Afternoon</span>
                     )
-                } else if(activePage === 16 && currDeadline === "normal_night"){
+                } else if((activePage === 16 && currDeadline === "normal_night") || (currDeadline === "saturday_night")){
                     arrButtons.push(
                         <span key={i+'-span'} className={'game-day-header'}> Saturday Night </span>
                     )

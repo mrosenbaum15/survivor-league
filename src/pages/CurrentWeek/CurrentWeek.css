@@ -3,7 +3,7 @@
     display: flex;
     margin-top: 7.5%;
     justify-content: space-evenly;
-    height: 80vh;
+    min-height: 100vh;
 }
 
 .spinner-section {

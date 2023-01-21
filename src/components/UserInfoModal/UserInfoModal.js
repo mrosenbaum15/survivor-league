@@ -25,7 +25,7 @@ function UserInfoModal({
                             }
                         </Modal.Title>
                     </Modal.Header>
-                    <Modal.Body>
+                    <Modal.Body scrollable={true}>
                         {
                             !showSpinnerInModal && fullUserInfo
                                 ? 
@@ -35,7 +35,7 @@ function UserInfoModal({
                                         <ListGroup.Item key={'total'} >Total correct: {fullUserInfo["start_streak"]}</ListGroup.Item>
                                         <ListGroup.Item key={'alive'} >Is start streak alive? {fullUserInfo["is_start_streak_alive"] ? "Yes" : "No"}  </ListGroup.Item>
                                         
-                                        <ListGroup.Item scrollable={true} key={'selected'} > Teams selected:
+                                        <ListGroup.Item key={'selected'} > Teams selected:
                                             <ul key='modal-ul' className='no-bullet-list'>
                                             {
                                                fullUserInfo["user_picked_teams"].map((val, i) => {
