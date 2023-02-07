@@ -100,13 +100,6 @@ function Admin() {
         );
     }
 
-    function getCurrIcon(team) {
-        var NFLTeam = teamIcons[team];
-        return (
-            <NFLTeam/>
-        )
-    }
-
     function handleTeamChosen(event, i, isFirst) {
         let buttonText = event.target.innerText;
         if(buttonText === undefined) {

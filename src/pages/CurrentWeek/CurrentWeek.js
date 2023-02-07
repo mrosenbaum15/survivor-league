@@ -1,6 +1,6 @@
 import React, {useEffect, useState, useContext} from 'react';
 import axios from 'axios';
-import {Spinner, Pagination, Table, ListGroup} from 'react-bootstrap';
+import {Spinner, Pagination, Table } from 'react-bootstrap';
 import './CurrentWeek.css';
 import { AccountContext } from './../../components/UserPool/Account';
 import CurrentWeekNum from './../../utils/CurrentWeekNum';
@@ -17,20 +17,20 @@ function CurrentWeek() {
     const [targetDate, setTargetDate] = useState(undefined);
 
     const [selections, setSelections] = useState({
-        "team": "",
-        "users": [],
-        "count": 0
+        'team': '',
+        'users': [],
+        'count': 0
     });
 
     const monthNames = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
     ];
 
     // {
-    //     "team": "Ravens",
-    //     "users": [],
-    //     "count": 3
+    //     'team': 'Ravens',
+    //     'users': [],
+    //     'count': 3
     // }
     
 
@@ -50,7 +50,6 @@ function CurrentWeek() {
         let sortedPicks = [];
 
         let currVal; let currTeam; let currUser;
-        let teamsStr = "";
         for(let i = 0; i < picks.length; i++) {
             console.log(picks);
             currVal = picks[i];
@@ -58,34 +57,31 @@ function CurrentWeek() {
             currUser = Object.keys(currVal)[0];
 
             // this is for adding a section for users who did not pick
-            if(currTeam.includes("Team")) currTeam = "N/A"
+            if(currTeam.includes('Team')) currTeam = 'N/A'
 
             if(teamToUser[currTeam]) teamToUser[currTeam].push(currUser)
             else teamToUser[currTeam] = [currUser]
         }
 
 
-        let maxCount = -1;
         let currLength;
         
         Object.keys(teamToUser).map((team, i) => {
             currLength = teamToUser[team].length;
 
             if(sortedPicks.length < 1) {
-                maxCount = currLength;
                 sortedPicks = [[team, currLength,teamToUser[team]]];
             }
 
             for(let j = 1; j <= i; j++) {
-                if (team === "N/A") {
+                if (team === 'N/A') {
                     sortedPicks.push([team, currLength,teamToUser[team]]);
                     break;
                 }
-                else if(currLength > sortedPicks[j-1][1] || sortedPicks[j-1][0] === "N/A") {
-                    maxCount = currLength;
+                else if(currLength > sortedPicks[j-1][1] || sortedPicks[j-1][0] === 'N/A') {
                     sortedPicks.splice(j-1, 0, [team, currLength,teamToUser[team]]);
                     break;
-                } else if(j == i) {
+                } else if(j === i) {
                     sortedPicks.push([team, currLength,teamToUser[team]]);
                 }
             }
@@ -96,7 +92,7 @@ function CurrentWeek() {
 
     function getAllPicks(weekNum) {
         if(PickEligibility(weekNum, (weekNum !== 16) ? 'normal' : 'normal_christmas')) {
-            alert("Games will be available after 12pm CST kickoff");
+            alert('Games will be available after 12pm CST kickoff');
             return;
         }
 
@@ -107,11 +103,11 @@ function CurrentWeek() {
             },
             params: {'week_num': weekNum}
         }).then((response) => {
-            if("access_denied" in response["data"]) setWeekIsAvailable(false)
-            else sortPicks(response["data"]);
+            if('access_denied' in response['data']) setWeekIsAvailable(false)
+            else sortPicks(response['data']);
         }).catch((error) => {
             console.log(error); 
-            alert("Unable to get picks for this week. Refresh the page and try again.");
+            alert('Unable to get picks for this week. Refresh the page and try again.');
         });
     }      
 
@@ -145,12 +141,12 @@ function CurrentWeek() {
                         <p>
                            {
                               targetDate 
-                                ? "Come back once games have kicked off at 12pm CST on " + monthNames[targetDate.getMonth()] + " " + targetDate.getDate()
-                                : "Come back once games have kicked off at 12pm"
+                                ? 'Come back once games have kicked off at 12pm CST on ' + monthNames[targetDate.getMonth()] + ' ' + targetDate.getDate()
+                                : 'Come back once games have kicked off at 12pm'
                            }
                         </p>
                         <div className='spinner'>
-                            <Spinner animation="grow" />
+                            <Spinner animation='grow' />
                         </div>
                     </div>
 
@@ -165,7 +161,7 @@ function CurrentWeek() {
     return (
         <>
             <div className='current-week-section'>
-                <Table size="sm" striped="columns" bordered hover className='current-week-table'>
+                <Table size='sm' striped='columns' bordered hover className='current-week-table'>
                     <thead>
                         <tr>
                             <th># Picks</th>
@@ -177,7 +173,7 @@ function CurrentWeek() {
                         {
                             selections && selections.length
                                 ? Object.keys(selections).map((val, i) => {
-                                    if(selections[val][0] == "N/A") {
+                                    if(selections[val][0] === 'N/A') {
                                         return (
                                             <tr>
                                                 <td className='current-week-table-td'> {selections[val][1]}</td>
@@ -185,8 +181,8 @@ function CurrentWeek() {
                                                 <td className='current-week-table-td'>
                                                     {
                                                         selections[val][2]
-                                                        ? selections[val][2].join(", ")
-                                                        : ""
+                                                        ? selections[val][2].join(', ')
+                                                        : ''
                                                     }
                                                 </td>
                                             </tr>
@@ -201,8 +197,8 @@ function CurrentWeek() {
                                             <td className='current-week-table-td'>
                                                 {
                                                     selections[val][2]
-                                                    ? selections[val][2].join(", ")
-                                                    : ""
+                                                    ? selections[val][2].join(', ')
+                                                    : ''
                                                 }
                                             </td>
                                         </tr>

@@ -1,10 +1,5 @@
 import GetTargetDate from './GetTargetDate';
 
-function IsDaylightSavings(date) {
-    let testDate = new Date(2022, 0, 1);
-    return(date.getTimezoneOffset() < testDate.getTimezoneOffset());
-}
-
 function PickEligibility(weekNum, deadline) {
 
     let startDate = GetTargetDate(weekNum, deadline);

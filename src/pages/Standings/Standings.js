@@ -1,8 +1,7 @@
 import React, {useEffect, useState, useContext} from 'react';
 import axios from 'axios';
-import { ListGroup, Badge, Card, Modal, Spinner } from 'react-bootstrap';
+import { ListGroup, Badge, Card } from 'react-bootstrap';
 import './Standings.css';
-import teamIcons from './../../utils/teamIcons';
 import { AccountContext } from './../../components/UserPool/Account';
 import UserInfoModal from '../../components/UserInfoModal/UserInfoModal';
 
@@ -46,22 +45,6 @@ function Standings() {
         "Most Correct: $",
         "Second Most Correct: $"
     ]);
-
-    function getStandings() {
-        axios.get('https://khvuxdskc6.execute-api.us-east-2.amazonaws.com/prod/standings', {
-            headers: {
-                Authorization: newSession['idToken']['jwtToken'],
-                'Content-Type': 'application/json'
-            }
-        }).then((response) => {
-            setStartStreak(response["data"]["longest_start_streak"]);
-            setMostCorrect(response["data"]["most_correct"]);
-            setStandings(response["data"]);
-        }).catch((error) => {
-            console.log(error); 
-            alert("Unable to standings. Refresh the page and try again.");
-        })
-    }
 
     function getUserInfo(username) {
         setShowModal(true);
@@ -121,7 +104,24 @@ function Standings() {
 
 
       useEffect(() => {
-        if(newSession !== undefined) getStandings();
+        if(newSession !== undefined) {
+            const getStandings = () => {
+                axios.get('https://khvuxdskc6.execute-api.us-east-2.amazonaws.com/prod/standings', {
+                headers: {
+                    Authorization: newSession['idToken']['jwtToken'],
+                    'Content-Type': 'application/json'
+                }
+                }).then((response) => {
+                    setStartStreak(response["data"]["longest_start_streak"]);
+                    setMostCorrect(response["data"]["most_correct"]);
+                    setStandings(response["data"]);
+                }).catch((error) => {
+                    console.log(error); 
+                    alert("Unable to standings. Refresh the page and try again.");
+                })
+            }
+            getStandings()
+        }
       }, [newSession]);
 
       useEffect(() => {

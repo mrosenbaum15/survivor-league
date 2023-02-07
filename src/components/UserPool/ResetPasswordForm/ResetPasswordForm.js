@@ -28,7 +28,7 @@ function ResetPasswordForm({
                 <Form>
                     <Form.Group className="mb-3" controlId="formBasicNameSignup">
                         <Form.Label></Form.Label>
-                        <Form.Control onChange={(e) => setNewPassword(e.target.value)} type="code" placeholder='Enter new password' type="password"/>
+                        <Form.Control onChange={(e) => setNewPassword(e.target.value)} placeholder='Enter new password' type="password"/>
                         <Form.Text className="text-muted">
                         </Form.Text>
                     </Form.Group>

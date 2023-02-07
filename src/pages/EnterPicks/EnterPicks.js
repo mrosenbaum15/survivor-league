@@ -111,7 +111,7 @@ function EnterPicks() {
             window.location.reload();
         }).catch((error) => {
             console.log(error);
-            if(error["response"]["status"] == 403) alert("The deadline has passed for this week and your pick cannot be submitted.");
+            if(error["response"]["status"] === 403) alert("The deadline has passed for this week and your pick cannot be submitted.");
             else alert("Unable to submit pick. Please text 847-630-2489 to submit.");
         });
 
@@ -169,15 +169,13 @@ function EnterPicks() {
 
     let arrButtons = [];
     let weeklyButtons = [];
-    let firstTeam = "";
-    let secondTeam = "";
     let prevDeadline = "";
     let isFirstTeamPicked, isSecondTeamPicked, buttonColor, currKey, currVal, currDeadline, eligibility;
 
     if(!locked[activePage-1] && matchupsArr.length > 1 && userPicks.length > 1) {
         for (let i = 0; i < matchupsArr[activePage-1].length * 2; i+=2) { 
-            firstTeam = matchupsArr[activePage-1][i/2].split(' ')[0];
-            secondTeam = matchupsArr[activePage-1][i/2].split(' ')[2];
+            let firstTeam = matchupsArr[activePage-1][i/2].split(' ')[0];
+            let secondTeam = matchupsArr[activePage-1][i/2].split(' ')[2];
     
             var NFLTeamOne = teamIcons[firstTeam];
             var NFLTeamTwo = teamIcons[secondTeam];

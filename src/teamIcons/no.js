@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 const NO = props => {
-  const { size } = props;
+
   return (
     <svg
       width={40}
