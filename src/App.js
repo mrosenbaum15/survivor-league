@@ -34,17 +34,17 @@ function App() {
   if(!status) {
     return (
       <BrowserRouter>
-            <Navbar fixed="top" bg="dark" variant="dark" style={{right:'0'}}> 
+            <Navbar fixed='top' bg='dark' variant='dark' style={{right:'0'}}> 
               <Container>
-                <Navbar.Brand href="/">House of Paign</Navbar.Brand>
-                  <Nav className="m-auto" style={{paddingRight: "100px"}}>
-                    <Nav.Link id='account-id' reloadDocument style={{position: 'absolute', right: '5px', bottom: '10px'}} as={Link} to="/login">Sign In</Nav.Link>
+                <Navbar.Brand href='/'>House of Paign</Navbar.Brand>
+                  <Nav className='m-auto' style={{paddingRight: '100px'}}>
+                    <Nav.Link id='account-id' reloadDocument style={{position: 'absolute', right: '5px', bottom: '10px'}} as={Link} to='/login'>Sign In</Nav.Link>
                   </Nav>
               </Container>
             </Navbar>
             <Routes>
-              <Route path="/register" element={<Register />} />
-              <Route path="/login" element={<Login/>} />
+              <Route path='/register' element={<Register />} />
+              <Route path='/login' element={<Login/>} />
             </Routes>
           </BrowserRouter>
     )
@@ -54,26 +54,26 @@ function App() {
 
         <Account>
           <BrowserRouter>
-            <Navbar expand="md" bg="dark" variant="dark" style={{position: 'relative', overflow:'wrap'}}> 
-                <Navbar.Brand style={{paddingLeft:'50px'}} href="/">House of Paign</Navbar.Brand>
-                  <Nav className="m-auto">
-                    <Nav.Link as={Link} to="/enterPicks">Enter Picks</Nav.Link>
-                    <Nav.Link as={Link} to="/currentWeek">Current Week</Nav.Link>
-                    <Nav.Link as={Link} to="/standings">Standings</Nav.Link>
-                    <Nav.Link as={Link} to="/rules">Rules</Nav.Link>
-                    <Nav.Link id='admin-link' as={Link} to="/admin">Admin</Nav.Link>
-                    <Nav.Link  id='account-id' reloadDocument as={Link} to="/login">Sign In</Nav.Link>
+            <Navbar expand='md' bg='dark' variant='dark' style={{position: 'relative', overflow:'wrap'}}> 
+                <Navbar.Brand style={{paddingLeft:'50px'}} href='/'>House of Paign</Navbar.Brand>
+                  <Nav className='m-auto'>
+                    <Nav.Link as={Link} to='/enterPicks'>Enter Picks</Nav.Link>
+                    <Nav.Link as={Link} to='/currentWeek'>Current Week</Nav.Link>
+                    <Nav.Link as={Link} to='/standings'>Standings</Nav.Link>
+                    <Nav.Link as={Link} to='/rules'>Rules</Nav.Link>
+                    <Nav.Link id='admin-link' as={Link} to='/admin'>Admin</Nav.Link>
+                    <Nav.Link  id='account-id' reloadDocument as={Link} to='/login'>Sign In</Nav.Link>
                   </Nav>
             </Navbar>
             <Routes>
-              <Route path="/register" element={<Register />} />
-              <Route path="/login" element={<Login/>} />
-              <Route path="/currentWeek" element={<CurrentWeek/>}/>
-              <Route path="/enterPicks" element={<EnterPicks/>}/>
-              <Route path="/standings" element={<Standings/>}/>
-              <Route path="/rules" element={<Rules/>}/>
-              <Route path="/admin" element={<Admin/>}/>
-              <Route path="/" element={<EnterPicks userInfo={newSession}/>}/>
+              <Route path='/register' element={<Register />} />
+              <Route path='/login' element={<Login/>} />
+              <Route path='/currentWeek' element={<CurrentWeek/>}/>
+              <Route path='/enterPicks' element={<EnterPicks/>}/>
+              <Route path='/standings' element={<Standings/>}/>
+              <Route path='/rules' element={<Rules/>}/>
+              <Route path='/admin' element={<Admin/>}/>
+              <Route path='/' element={<EnterPicks userInfo={newSession}/>}/>
             </Routes>
           </BrowserRouter>
         </Account>

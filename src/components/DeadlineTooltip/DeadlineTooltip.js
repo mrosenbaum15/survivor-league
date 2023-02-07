@@ -8,8 +8,8 @@ function DeadlineTooltip({
     weekNum
 }) {
     const monthNames = [
-                        "January", "February", "March", "April", "May", "June",
-                        "July", "August", "September", "October", "November", "December"
+                        'January', 'February', 'March', 'April', 'May', 'June',
+                        'July', 'August', 'September', 'October', 'November', 'December'
     ];
 
     let deadline = (weekNum !== 16) ? 'normal' : 'normal_christmas';
@@ -21,21 +21,21 @@ function DeadlineTooltip({
         <>
             <div className='deadline-tooltip-section'>
                 <OverlayTrigger
-                    placement="bottom"
+                    placement='bottom'
                     overlay={
-                        <Tooltip id="button-tooltip-2">
+                        <Tooltip id='button-tooltip-2'>
                             The deadline to submit a pick is {monthNames[tar.getMonth()]} {tar.getDate()} at 12pm CST.
                             If a game is being played before {dow} at 12, the pick must be submitted before the game's kickoff.
                         </Tooltip>}
                     >
                     {({ ref, ...triggerHandler }) => (
                         <Button
-                        variant="light"
+                        variant='light'
                         {...triggerHandler}
-                        className="d-inline-flex align-items-center tooltip-outline"
+                        className='d-inline-flex align-items-center tooltip-outline'
                         >
-                        <Alarm className="deadline-tooltip-icon" />
-                        <span className="deadline-tooltip-display" ref={ref}>Weekly Deadline - {monthNames[tar.getMonth()]} {tar.getDate()}</span>
+                        <Alarm className='deadline-tooltip-icon' />
+                        <span className='deadline-tooltip-display' ref={ref}>Weekly Deadline - {monthNames[tar.getMonth()]} {tar.getDate()}</span>
                         </Button>
                     )}
                 </OverlayTrigger>

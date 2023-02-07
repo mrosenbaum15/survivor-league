@@ -22,7 +22,7 @@ function Login() {
   const [newEmail, setNewEmail] = useState('');
   const [newPassword, setNewPassword] = useState('');
 
-  const [authMode, setAuthMode] = useState("signin");
+  const [authMode, setAuthMode] = useState('signin');
 
   const [newSession, setNewSession] = useState(undefined);
   const [verifyProcess, setVerifyProcess] = useState(false);
@@ -47,7 +47,7 @@ function Login() {
   }, [status]);
 
   const changeAuthMode = () => {
-    setAuthMode(authMode === "signin" ? "signup" : "signin");
+    setAuthMode(authMode === 'signin' ? 'signup' : 'signin');
   }
 
   function setupNewUser() {
@@ -60,7 +60,7 @@ function Login() {
     }).then((response) => {
     }).catch((error) => {
         console.log(error);
-        alert("Unable to set up new user. Please text 847-630-2489 to complete user setup.");
+        alert('Unable to set up new user. Please text 847-630-2489 to complete user setup.');
     })
   }
 
@@ -96,7 +96,7 @@ function Login() {
     UserPool.signUp(newUsername, newPassword, attributeList, null, (err, data) => {
       if (err) {
         console.log(err);
-        alert("Couldn't sign up. Please make sure all fields are filled out and password has at least 8 characters, including uppercase and lowercase letters, a number and a special character.");
+        alert('Could not sign up. Please make sure all fields are filled out and password has at least 8 characters, including uppercase and lowercase letters, a number and a special character.');
       } else {
         setVerifyProcess(true);
         setAuthMode('login')
@@ -117,7 +117,7 @@ function Login() {
     user.confirmRegistration(confirmationCode, true, (err, data) => {
       if (err) {
         console.log(err);
-        alert("Couldn't verify account. Please contact the admin.");
+        alert('Could not verify account. Please contact the admin.');
       } else {
         alert('Account verified successfully');
         window.location.href = '/login';
@@ -138,7 +138,7 @@ function Login() {
         },
         onFailure: (err) => {
           console.log(err);
-          alert("Couldn't send verification code. Please make sure all fields are filled out and password has at least 8 characters, including uppercase and lowercase letters, a number and a special character. If you have tried more than 3 times, please wait 15 minutes and try again.");
+          alert('Could not send verification code. Please make sure all fields are filled out and password has at least 8 characters, including uppercase and lowercase letters, a number and a special character. If you have tried more than 3 times, please wait 15 minutes and try again.');
         }
       }
     );
@@ -162,7 +162,7 @@ function Login() {
           setEnterUsername(false);
         },
         onFailure: (err) => {
-          alert("Couldn't send verification code. Please refresh and try again.");
+          alert('Could not send verification code. Please refresh and try again.');
         },
       }
     );

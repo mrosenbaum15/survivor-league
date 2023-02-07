@@ -17,16 +17,16 @@ function LoginForm({
         <>
             <div className='login-section'>
                 <Form>
-                <Form.Group className="mb-3">
+                <Form.Group className='mb-3'>
                     <Form.Label>Username</Form.Label>
-                    <Form.Control value={username} onChange={(e) => setUsername(e.target.value)} type="username" placeholder="Enter username" />
-                    <Form.Text className="text-muted">
+                    <Form.Control value={username} onChange={(e) => setUsername(e.target.value)} type='username' placeholder='Enter username' />
+                    <Form.Text className='text-muted'>
                     </Form.Text>
                 </Form.Group>
 
-                <Form.Group className="mb-3">
+                <Form.Group className='mb-3'>
                     <Form.Label>Password</Form.Label>
-                    <Form.Control value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder="Password" />
+                    <Form.Control value={password} onChange={(e) => setPassword(e.target.value)} type='password' placeholder='Password' />
                 </Form.Group>
                 <div>
                     <Button className='anchor-button' onClick={setForgotPassword}>Forgot Password </Button>
@@ -34,7 +34,7 @@ function LoginForm({
                 </div>
                     
                 </Form>
-                <Button onClick={handleLogin} variant="primary">Login</Button>
+                <Button onClick={handleLogin} variant='primary'>Login</Button>
             </div>
         </>       
     );

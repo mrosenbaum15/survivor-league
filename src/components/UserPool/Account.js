@@ -15,7 +15,7 @@ const Account = (props) => {
             reject(err);
           } else {
             setNewSession(session);
-            document.getElementById('account-id').innerHTML = 'Account'// = <Nav.Link id='account-id' reloadDocument style={{position: 'absolute', right: '25px'}} as={Link} to="/login">Balls</Nav.Link>
+            document.getElementById('account-id').innerHTML = 'Account'// = <Nav.Link id='account-id' reloadDocument style={{position: 'absolute', right: '25px'}} as={Link} to='/login'>Balls</Nav.Link>
             if((!session || session['idToken']['payload']['cognito:groups']) && session['idToken']['payload']['cognito:groups'][0] !== 'admin') {
               if(document.getElementById('admin-link')) document.getElementById('admin-link').remove();
             }

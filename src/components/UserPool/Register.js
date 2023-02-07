@@ -19,7 +19,7 @@ function Register() {
     UserPool.signUp(username, password, attributeList, null, (err, data) => {
       if (err) {
         console.log(err);
-        alert("Couldn't sign up");
+        alert('Could not sign up');
       } else {
         alert('User Added Successfully');
       }
@@ -31,26 +31,26 @@ function Register() {
       <form onSubmit={onSubmit}>
         UserName:
         <input
-          type="text"
+          type='text'
           value={username.toLowerCase().trim()}
           onChange={(e) => setUsername(e.target.value)}
         />
         <br />
         Email:
         <input
-          type="email"
+          type='email'
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
         <br />
         Password:
         <input
-          type="password"
+          type='password'
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
         <br />
-        <button type="submit">Register</button>
+        <button type='submit'>Register</button>
       </form>
     </div>
   );
