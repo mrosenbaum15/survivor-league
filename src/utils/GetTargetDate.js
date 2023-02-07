@@ -3,8 +3,8 @@ function GetTargetDate(weekNum, deadline) {
     let endDate;
 
     if(weekNum === 2){
-        startDate = new Date(2022, 8, 13);
-        endDate = new Date(2022, 8, 20);
+        startDate = new Date(2024, 8, 13);
+        endDate = new Date(2024, 8, 20);
     } else if(weekNum === 3){
         startDate = new Date(2022, 8, 20);
         endDate = new Date(2022, 8, 27);
@@ -59,7 +59,6 @@ function GetTargetDate(weekNum, deadline) {
     }
 
     while (startDate <= endDate) {
-        // console.log("DATE: " + startDate + " DOW: " + startDate.getDay());
         if(weekNum != 16 && (deadline.includes('normal') || deadline === "london" || deadline === "mnf") && startDate.getDay() === 0) {
             break;
         } else if((deadline === 'tnf' || deadline.includes("thanksgiving")) && startDate.getDay() === 4) {

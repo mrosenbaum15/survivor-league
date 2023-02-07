@@ -112,7 +112,6 @@ function Admin() {
         if(buttonText === undefined) {
             const iconText = (event.target.nearestViewportElement) ? event.target.nearestViewportElement.id : event.target.id;
             if(iconText === undefined) {
-                console.log("UNDEFINED")
                 return;
             }
             buttonText = iconText;
