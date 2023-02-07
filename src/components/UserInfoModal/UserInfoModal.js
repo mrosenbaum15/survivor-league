@@ -39,7 +39,6 @@ function UserInfoModal({
                                             <ul key='modal-ul' className='no-bullet-list'>
                                             {
                                                fullUserInfo["user_picked_teams"].map((val, i) => {
-                                                    console.log(val);
                                                     if(Object.keys(val)[0].includes("Team")) return (<li key={i+'-li'}> Week {i+1}: None </li>)
                                                     let CurrIcon = teamIcons[Object.keys(val)[0]];
 

@@ -64,7 +64,6 @@ function CurrentWeek() {
             else teamToUser[currTeam] = [currUser]
         }
 
-        console.log(teamToUser);
 
         let maxCount = -1;
         let currLength;
@@ -78,7 +77,6 @@ function CurrentWeek() {
             }
 
             for(let j = 1; j <= i; j++) {
-                console.log(team)
                 if (team === "N/A") {
                     sortedPicks.push([team, currLength,teamToUser[team]]);
                     break;
@@ -179,7 +177,6 @@ function CurrentWeek() {
                         {
                             selections && selections.length
                                 ? Object.keys(selections).map((val, i) => {
-                                    console.log(selections[val][0])
                                     if(selections[val][0] == "N/A") {
                                         return (
                                             <tr>

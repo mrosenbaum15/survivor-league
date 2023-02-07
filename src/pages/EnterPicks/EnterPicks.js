@@ -10,6 +10,7 @@ import { AccountContext } from './../../components/UserPool/Account';
 import PastPicksCard from '../../components/PastPicksCard/PastPicksCard';
 import DeadlineTooltip from '../../components/DeadlineTooltip/DeadlineTooltip';
 import { Lock } from 'react-bootstrap-icons';
+import GameDeadlineTitle from '../../utils/GameDeadlineTitle';
 
 // API article https://medium.com/swlh/skip-lambda-save-data-to-dynamodb-directly-using-api-gateway-process-later-with-streams-dab2ceef9a9d
 function EnterPicks() {
@@ -117,9 +118,8 @@ function EnterPicks() {
     }
 
 
-      useEffect(() => {
+    useEffect(() => {
         if(newSession !== undefined) {
-            console.log(newSession);
             getAllMatchups();
             getUserPicks();
         }
@@ -166,23 +166,13 @@ function EnterPicks() {
         else newPickArr[activePage-1] = currName;
         setCurrentPickArr(newPickArr);
     }
-    // API - current week (must write lambda function that writes user curr team into back of userPreviousTeams)
-    // userCurrTeam === selected team on the page? 
-    // if userCurrTeam === "", then userCurrTeam = userPickedTeamsArr(lastElement)
 
-    // TO-DO check if deadline past. Make objects non-selectable/submittable
     let arrButtons = [];
     let weeklyButtons = [];
     let firstTeam = "";
     let secondTeam = "";
-    let isFirstTeamPicked;
-    let isSecondTeamPicked;
-    let buttonColor;
-    let currKey;
-    let currVal;
-    let currDeadline;
     let prevDeadline = "";
-    let eligibility;
+    let isFirstTeamPicked, isSecondTeamPicked, buttonColor, currKey, currVal, currDeadline, eligibility;
 
     if(!locked[activePage-1] && matchupsArr.length > 1 && userPicks.length > 1) {
         for (let i = 0; i < matchupsArr[activePage-1].length * 2; i+=2) { 
@@ -212,61 +202,12 @@ function EnterPicks() {
             }
     
             currDeadline = deadlinesArr.length > 1 ? deadlinesArr[activePage-1][i/2] : "";
-            // TODO: clean up code and find way to return span and clean up code
             if(currDeadline !== prevDeadline) {
-                if(currDeadline === 'tnf') {
-                    arrButtons.push(
-                        <span key={i+'-span'} className={'game-day-header'}> Thursday </span>
-                    )
-                } else if(currDeadline.includes("christmas")){
-                    arrButtons.push(
-                        <span key={i+'-span'} className={'game-day-header'}> Christmas </span>
-                    )
-                } else if((activePage === 16 && currDeadline === "normal") || (currDeadline === "saturday_morning")){
-                    arrButtons.push(
-                        <span key={i+'-span'} className={'game-day-header'}> Saturday Early Afternoon</span>
-                    )
-                } else if((activePage === 16 && currDeadline === "normal_afternoon") || (currDeadline === "saturday_afternoon")){ // TODO: improve saturday logic for next year
-                    arrButtons.push(
-                        <span key={i+'-span'} className={'game-day-header'}> Saturday Late Afternoon</span>
-                    )
-                } else if((activePage === 16 && currDeadline === "normal_night") || (currDeadline === "saturday_night")){
-                    arrButtons.push(
-                        <span key={i+'-span'} className={'game-day-header'}> Saturday Night </span>
-                    )
-                } else if(currDeadline === 'normal'){
-                    arrButtons.push(
-                        <span key={i+'-span'} className={'game-day-header'}> Sunday Early Afternoon </span>
-                    )
-                } else if(currDeadline === 'normal_afternoon'){
-                    arrButtons.push(
-                        <span key={i+'-span'} className={'game-day-header'}> Sunday Late Afternoon</span>
-                    )
-                } else if(currDeadline === 'normal_night'){
-                    arrButtons.push(
-                        <span key={i+'-span'} className={'game-day-header'}> Sunday Night </span>
-                    )
-                } else if(currDeadline === 'mnf'){
-                    arrButtons.push(
-                        <span key={i+'-span'} className={'game-day-header'}> Monday </span>
-                    )
-                } else if(currDeadline === 'london'){
-                    arrButtons.push(
-                        <span key={i+'-span'} className={'game-day-header'}> Sunday AM in London </span>
-                    )
-                } else if(currDeadline === 'thanksgiving_morning') {
-                    arrButtons.push(
-                        <span key={i+'-span'} className={'game-day-header'}> Thanksgiving Morning </span>
-                    )
-                } else if(currDeadline === 'thanksgiving_afternoon') {
-                    arrButtons.push(
-                        <span key={i+'-span'} className={'game-day-header'}> Thanksgiving Afternoon </span>
-                    )
-                } else if(currDeadline === 'thanksgiving_night') {
-                    arrButtons.push(
-                        <span key={i+'-span'} className={'game-day-header'}> Thanksgiving Night </span>
-                    )
-                }
+                console.log("Banner")
+                arrButtons.push(
+                    <span key={i+'-span'} className={'game-day-header'}> {GameDeadlineTitle(currDeadline, activePage)} </span>
+                )
+                
             } 
     
             prevDeadline = currDeadline;
@@ -330,7 +271,6 @@ function EnterPicks() {
             )
         }
     }
-    
 
     function goToLogin() {
         navigate('/login')

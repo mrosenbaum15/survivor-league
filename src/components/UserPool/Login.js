@@ -51,7 +51,6 @@ function Login() {
   }
 
   function setupNewUser() {
-    console.log('Setting Up New User');
     axios.put('https://khvuxdskc6.execute-api.us-east-2.amazonaws.com/prod/setup-new-user', {
         headers: {
             'Content-Type': 'application/json'
