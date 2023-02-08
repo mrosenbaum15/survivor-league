@@ -24,7 +24,7 @@ function Rules() {
                 <div className='individual-rule-card-section'>
                 <Card style={{ height: '22rem', width: '18rem' }}>
                     <Card.Header><b>Entry Fee</b></Card.Header>
-                            <ListGroup variant="flush">
+                            <ListGroup variant='flush'>
                              <ListGroup.Item>A. Venmo <span className='money'> $25 </span> to <b>@mrosenbaum15</b> </ListGroup.Item>
                              <ListGroup.Item>B. Pay in Beer</ListGroup.Item>
                              <ListGroup.Item>Must pay before kickoff of Sunday early afternoon games for Week 1</ListGroup.Item>
@@ -35,7 +35,7 @@ function Rules() {
                 <div className='individual-rule-card-section'>
                     <Card style={{ height: '22rem', width: '18rem' }}>
                         <Card.Header><b>Payouts</b></Card.Header>
-                            <ListGroup variant="flush">
+                            <ListGroup variant='flush'>
                              <ListGroup.Item>53% to longest start streak</ListGroup.Item>
                              <ListGroup.Item>25% to most correct in total</ListGroup.Item>
                              <ListGroup.Item>11% to second longest start streak</ListGroup.Item>
@@ -48,7 +48,7 @@ function Rules() {
                 <div className='individual-rule-card-section'>
                 <Card style={{ height: '22rem', width: '18rem' }}>
                     <Card.Header><b>Picking</b></Card.Header>
-                            <ListGroup variant="flush">
+                            <ListGroup variant='flush'>
                              <ListGroup.Item>Deadline: 12pm CST on Sundays</ListGroup.Item>
                              <ListGroup.Item>Thursday Night Football games lock at 7:20pm CST on Thursdays</ListGroup.Item>
                              <ListGroup.Item>London games lock at 8:30am CST on Sundays</ListGroup.Item>
@@ -60,7 +60,7 @@ function Rules() {
                 <div className='individual-rule-card-section'>
                 <Card style={{ height: '22rem', width: '18rem' }}>
                         <Card.Header><b>Results</b></Card.Header>
-                            <ListGroup variant="flush">
+                            <ListGroup variant='flush'>
                             <ListGroup.Item>A correct pick occurs ONLY when a team wins the game</ListGroup.Item>
                              <ListGroup.Item>A tie results in an incorrect pick</ListGroup.Item>
                              <ListGroup.Item>If the last undefeated teams all lose in the same week, those teams will split the first place payouts for longest start streak</ListGroup.Item>

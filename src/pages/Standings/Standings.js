@@ -32,18 +32,18 @@ function Standings() {
 
     // API: get payoutsArr
     const [payoutsArr, setPayoutsArr] = useState([
-        "Longest Start Streak: $",
-        "Second Longest Start Streak: $",
-        "Most Correct: $",
-        "Second Most Correct: $"
+        'Longest Start Streak: $',
+        'Second Longest Start Streak: $',
+        'Most Correct: $',
+        'Second Most Correct: $'
     ]);      
 
     // API: get payoutsArr
     const [moneyDistributionArr, setMoneyDistributionArr] = useState([
-        "Longest Start Streak: $",
-        "Second Longest Start Streak: $",
-        "Most Correct: $",
-        "Second Most Correct: $"
+        'Longest Start Streak: $',
+        'Second Longest Start Streak: $',
+        'Most Correct: $',
+        'Second Most Correct: $'
     ]);
 
     function getUserInfo(username) {
@@ -55,19 +55,19 @@ function Standings() {
             },
             params: {'user': username}
         }).then((response) => {
-            setFullUserInfo(response["data"]);
+            setFullUserInfo(response['data']);
             setShowSpinnerInModal(false);
         }).catch((error) => {
             console.log(error); 
-            alert("Unable to get user info. Refresh the page and try again.");
+            alert('Unable to get user info. Refresh the page and try again.');
         })
     }
 
     function getPayoutTiers(currStreakArr, isMostCorrect) {
         let tierNum = 1;
         let highScore = -1;
-        let firstTier = "";
-        let secondTier = "";
+        let firstTier = '';
+        let secondTier = '';
         let val;
 
         let firstTierLen = 0;
@@ -76,21 +76,21 @@ function Standings() {
             currUser = Object.keys(val)[0];
             currStreak = isMostCorrect ? Object.values(val)[0] : Object.values(val)[0][0];
             if(currStreak > highScore) {
-                firstTier = (firstTier === "") ? firstTier + currUser : firstTier + ", " + currUser;
+                firstTier = (firstTier === '') ? firstTier + currUser : firstTier + ', ' + currUser;
                 highScore = currStreak;
                 firstTierLen = 1;
             } else if(currStreak === highScore && tierNum === 1) {
-                firstTier = (firstTier === "") ? firstTier + currUser : firstTier + ", " + currUser;
+                firstTier = (firstTier === '') ? firstTier + currUser : firstTier + ', ' + currUser;
                 firstTierLen++;
             } else if(currStreak < highScore && tierNum === 1 && firstTierLen === 1) {
-                secondTier = (secondTier === "") ? secondTier + currUser : secondTier + ", " + currUser;
+                secondTier = (secondTier === '') ? secondTier + currUser : secondTier + ', ' + currUser;
                 highScore = currStreak;
                 tierNum = 2;
             } else if(currStreak < highScore && tierNum === 1 && firstTierLen > 1) {
                 secondTier = firstTier;
                 break;
             } else if(currStreak === highScore && tierNum === 2) {
-                secondTier = (secondTier === "") ? secondTier + currUser : secondTier + ", " + currUser;                
+                secondTier = (secondTier === '') ? secondTier + currUser : secondTier + ', ' + currUser;                
             }
         };
 
@@ -112,12 +112,12 @@ function Standings() {
                     'Content-Type': 'application/json'
                 }
                 }).then((response) => {
-                    setStartStreak(response["data"]["longest_start_streak"]);
-                    setMostCorrect(response["data"]["most_correct"]);
-                    setStandings(response["data"]);
+                    setStartStreak(response['data']['longest_start_streak']);
+                    setMostCorrect(response['data']['most_correct']);
+                    setStandings(response['data']);
                 }).catch((error) => {
                     console.log(error); 
-                    alert("Unable to standings. Refresh the page and try again.");
+                    alert('Unable to standings. Refresh the page and try again.');
                 })
             }
             getStandings()
@@ -132,10 +132,10 @@ function Standings() {
             let firstPayout = 25 * totalEntries - mostPayout - (secondLongestPayout * 2);
 
             setMoneyDistributionArr([
-                "Longest Start Streak: $" + firstPayout.toFixed(2),
-                "Second Longest Start Streak: $" + secondLongestPayout.toFixed(2),
-                "Most Correct: $" + mostPayout.toFixed(2),
-                "Second Most Correct: $" + secondLongestPayout.toFixed(2)
+                'Longest Start Streak: $' + firstPayout.toFixed(2),
+                'Second Longest Start Streak: $' + secondLongestPayout.toFixed(2),
+                'Most Correct: $' + mostPayout.toFixed(2),
+                'Second Most Correct: $' + secondLongestPayout.toFixed(2)
             ]);
             
 
@@ -153,10 +153,10 @@ function Standings() {
             let numSecondMostCommas = 1 + (secondTierMostStreak.match(/,/g) || []).length;
 
             setPayoutsArr([
-                "Longest Start Streak: " + firstTierStartStreak + " ($" +  (firstPayout / numFirstStartCommas).toFixed(2).toString() + " each)",
-                "Second Longest Start Streak: " + secondTierStartStreak + " ($" +  (secondLongestPayout / numSecondStartCommas).toFixed(2).toString() + " each)",
-                "Most Correct: " + firstTierMostStreak + " ($" +  (mostPayout / numFirstMostCommas).toFixed(2).toString() + " each)",
-                "Second Most Correct: " + secondTierMostStreak + " ($" +  (secondLongestPayout / numSecondMostCommas).toFixed(2).toString() + " each)"
+                'Longest Start Streak: ' + firstTierStartStreak + ' ($' +  (firstPayout / numFirstStartCommas).toFixed(2).toString() + ' each)',
+                'Second Longest Start Streak: ' + secondTierStartStreak + ' ($' +  (secondLongestPayout / numSecondStartCommas).toFixed(2).toString() + ' each)',
+                'Most Correct: ' + firstTierMostStreak + ' ($' +  (mostPayout / numFirstMostCommas).toFixed(2).toString() + ' each)',
+                'Second Most Correct: ' + secondTierMostStreak + ' ($' +  (secondLongestPayout / numSecondMostCommas).toFixed(2).toString() + ' each)'
             ]);            
       }, [standings]);
 
@@ -164,7 +164,7 @@ function Standings() {
     let startStreakItems = []
     let prevVal = -1;
 
-    let currUser = "";
+    let currUser = '';
     let currStreak = 0;
     let isStreakAlive = true;
     let badgeStyle;
@@ -174,13 +174,13 @@ function Standings() {
         isStreakAlive = Object.values(val)[0][1];
         
         // add mappings between name and username here
-        badgeStyle = isStreakAlive ? "success" : "danger";
+        badgeStyle = isStreakAlive ? 'success' : 'danger';
 
         if(currStreak === prevVal) {
             startStreakItems.push(
                 <>
-                    <ListGroup.Item key={i+'-start-streak-arr'} action onClick={showUserInfoModal} className="d-flex justify-content-between align-items-start cursor"> 
-                        <div key='ss-div' className="ms-2 me-auto profile-button" style={{paddingLeft: '12px'}}>
+                    <ListGroup.Item key={i+'-start-streak-arr'} action onClick={showUserInfoModal} className='d-flex justify-content-between align-items-start cursor'> 
+                        <div key='ss-div' className='ms-2 me-auto profile-button' style={{paddingLeft: '12px'}}>
                             {currUser}
                         </div>
                         <Badge key='ss-badge' style={{marginLeft: '10px'}} bg={badgeStyle} pill>
@@ -192,8 +192,8 @@ function Standings() {
         } else {
             startStreakItems.push(
                 <>
-                    <ListGroup.Item key={i+'-start-streak-arr'} action onClick={showUserInfoModal} as="li" className="d-flex justify-content-between align-items-start cursor">
-                        <div key='ss-div' className="ms-2 me-auto profile-button">
+                    <ListGroup.Item key={i+'-start-streak-arr'} action onClick={showUserInfoModal} as='li' className='d-flex justify-content-between align-items-start cursor'>
+                        <div key='ss-div' className='ms-2 me-auto profile-button'>
                             {currUser}
                         </div>
                         <Badge key='ss-badge' style={{marginLeft: '10px'}} bg={badgeStyle} pill>
@@ -208,7 +208,7 @@ function Standings() {
     });
 
     let mostCorrectItems = []
-    let currUserMost = "";
+    let currUserMost = '';
     let currStreakMost = 0;
     prevVal = -1;
     mostCorrect.forEach((val, i) => {
@@ -218,11 +218,11 @@ function Standings() {
         if(currStreakMost === prevVal) {
             mostCorrectItems.push(
                 <>
-                    <ListGroup.Item key={i+'-most-arr'} action onClick={showUserInfoModal} className="d-flex justify-content-between align-items-start cursor"> 
-                        <div key='mc-div' className="ms-2 me-auto profile-button" style={{paddingLeft: '15px'}}>
+                    <ListGroup.Item key={i+'-most-arr'} action onClick={showUserInfoModal} className='d-flex justify-content-between align-items-start cursor'> 
+                        <div key='mc-div' className='ms-2 me-auto profile-button' style={{paddingLeft: '15px'}}>
                             {currUserMost}
                         </div>
-                        <Badge key='mc-badge' style={{marginLeft: '10px'}} bg="success" pill>
+                        <Badge key='mc-badge' style={{marginLeft: '10px'}} bg='success' pill>
                             {currStreakMost}
                         </Badge>
                     </ListGroup.Item>
@@ -231,11 +231,11 @@ function Standings() {
         } else {
             mostCorrectItems.push(
                 <>
-                    <ListGroup.Item key={i+'-most-arr'} action onClick={showUserInfoModal} as="li" className="d-flex justify-content-between align-items-start cursor">
-                        <div key='mc-div' className="ms-2 me-auto profile-button">
+                    <ListGroup.Item key={i+'-most-arr'} action onClick={showUserInfoModal} as='li' className='d-flex justify-content-between align-items-start cursor'>
+                        <div key='mc-div' className='ms-2 me-auto profile-button'>
                             {currUserMost}
                         </div>
-                        <Badge key='mc-badge' style={{marginLeft: '10px'}} bg="success" pill>
+                        <Badge key='mc-badge' style={{marginLeft: '10px'}} bg='success' pill>
                                 {currStreakMost}
                         </Badge>
                     </ListGroup.Item>
@@ -249,12 +249,12 @@ function Standings() {
     let payoutsItems = []
     payoutsArr.forEach((val, i) => {
         payoutsItems.push(
-            <ListGroup.Item key={i+"-payouts-arr"}> 
+            <ListGroup.Item key={i+'-payouts-arr'}> 
                 <div key='ah'> 
-                    {val.split(":")[0]}
+                    {val.split(':')[0]}
                 </div>
-                <div key='ahhhh' className="payouts-item">
-                    {val.split(":")[1]}
+                <div key='ahhhh' className='payouts-item'>
+                    {val.split(':')[1]}
                 </div>
             </ListGroup.Item>  
         );
@@ -263,12 +263,12 @@ function Standings() {
     let moneyDistItems = []
     moneyDistributionArr.forEach((val, i) => {
         moneyDistItems.push(
-            <ListGroup.Item key={i+"-money-dist-arr"}> 
+            <ListGroup.Item key={i+'-money-dist-arr'}> 
                 <div key='ahh'> 
-                    {val.split(":")[0]}
+                    {val.split(':')[0]}
                 </div>
-                <div key='ahhh' className="payouts-item">
-                    {val.split(":")[1]}
+                <div key='ahhh' className='payouts-item'>
+                    {val.split(':')[1]}
                 </div>
             </ListGroup.Item>  
         );
@@ -280,7 +280,7 @@ function Standings() {
             <div key='first-section' className='standings-card-section'>
                 <Card key={7}className='standings-card'>
                         <Card.Header className='standings-header-1'> Longest Start Streak </Card.Header>
-                        <ListGroup variant="flush" as="ol" numbered>
+                        <ListGroup variant='flush' as='ol' numbered>
                             {startStreakItems}
                         </ListGroup>
                     </Card>
@@ -289,7 +289,7 @@ function Standings() {
                 <div key='second-section' className='standings-card-section'>
                     <Card  key={8}className='standings-card'>
                         <Card.Header className='standings-header-1'> Most Correct </Card.Header>
-                        <ListGroup variant="flush" as="ol" numbered>
+                        <ListGroup variant='flush' as='ol' numbered>
                             {mostCorrectItems}
                         </ListGroup>
                     </Card>
@@ -299,7 +299,7 @@ function Standings() {
                 <div key='third-section' className='standings-card-section'>
                     <Card  key={9}className='standings-card'>
                         <Card.Header  className='standings-header-1'> Payouts </Card.Header>
-                        <ListGroup  variant="flush">
+                        <ListGroup  variant='flush'>
                             
                             {payoutsItems}
 
@@ -310,7 +310,7 @@ function Standings() {
                 <div key='fourth-section' className='standings-card-section'>
                     <Card key={10}className='standings-card'>
                         <Card.Header className='standings-header-1'> Money Distribution </Card.Header>
-                        <ListGroup variant="flush">
+                        <ListGroup variant='flush'>
                             
                             {moneyDistItems}
 

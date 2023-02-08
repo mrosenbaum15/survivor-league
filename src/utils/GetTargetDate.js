@@ -59,9 +59,9 @@ function GetTargetDate(weekNum, deadline) {
     }
 
     while (startDate <= endDate) {
-        if(weekNum !== 16 && (deadline.includes('normal') || deadline === "london" || deadline === "mnf") && startDate.getDay() === 0) {
+        if(weekNum !== 16 && (deadline.includes('normal') || deadline === 'london' || deadline === 'mnf') && startDate.getDay() === 0) {
             break;
-        } else if((deadline === 'tnf' || deadline.includes("thanksgiving")) && startDate.getDay() === 4) {
+        } else if((deadline === 'tnf' || deadline.includes('thanksgiving')) && startDate.getDay() === 4) {
             break;
         } else if((weekNum === 16 || deadline.includes('saturday')) && startDate.getDay() === 6) {
             break;

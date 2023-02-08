@@ -17,8 +17,8 @@ function PickEligibility(weekNum, deadline) {
     else if(deadline === 'thanksgiving_morning') numHours = 17.5
     else if(deadline === 'thanksgiving_afternoon') numHours = 21.5
     else if(deadline === 'thanksgiving_night') numHours = 25.33;
-    else if(deadline === "saturday_afternoon") numHours = 21;
-    else if(deadline === "saturday_night") numHours = 25.33;
+    else if(deadline === 'saturday_afternoon') numHours = 21;
+    else if(deadline === 'saturday_night') numHours = 25.33;
     else numHours = 18;
     
     return(offsetTime < startDate.getTime() + (numHours * 60 * 60 * 1000))

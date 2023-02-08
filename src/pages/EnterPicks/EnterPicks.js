@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useContext} from 'react';
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { ButtonGroup, ButtonToolbar, Button, Form, Pagination} from 'react-bootstrap';
 import './EnterPicks.css';
@@ -20,7 +20,7 @@ function EnterPicks() {
     let navigate = useNavigate(); 
 
     // const [isTeamSelectedArr, setIsTeamSelectedArr] = useState(Array(18).fill(false));
-    const [currentPickArr, setCurrentPickArr] = useState(Array(18).fill(""));
+    const [currentPickArr, setCurrentPickArr] = useState(Array(18).fill(''));
     const [activeButtonArr, setActiveButtonArr] = useState(Array(18).fill(Array(32).fill(null)));
 
     // API - current week of season
@@ -53,7 +53,7 @@ function EnterPicks() {
         let tempVal;
         picks.forEach((val,i) => {
             tempVal = Object.keys(val)[0];
-            if(!tempVal.includes("Team")) updatedPicks[i] = tempVal;
+            if(!tempVal.includes('Team')) updatedPicks[i] = tempVal;
         }) 
         
         setCurrentPickArr(updatedPicks);
@@ -67,13 +67,13 @@ function EnterPicks() {
             },
             params: {'username': newSession['accessToken']['payload']['username']}
         }).then((response) => {
-            setLocked(response["data"]["locked"]);
-            setMatchupsArr(response["data"]["matchups"]);
-            setDeadlinesArr(response["data"]["deadlines"]);
+            setLocked(response['data']['locked']);
+            setMatchupsArr(response['data']['matchups']);
+            setDeadlinesArr(response['data']['deadlines']);
             setShowSubmitButton(true);
         }).catch((error) => {
             console.log(error); 
-            alert("Unable to get matchups. Refresh the page and try again.");
+            alert('Unable to get matchups. Refresh the page and try again.');
         });
     }
 
@@ -85,11 +85,11 @@ function EnterPicks() {
             },
             params: {'user': newSession['accessToken']['payload']['username']}
         }).then((response) => {
-            setUserStats(response["data"]);
-            establishPicks(response["data"]["user_picked_teams"]);
+            setUserStats(response['data']);
+            establishPicks(response['data']['user_picked_teams']);
         }).catch((error) => {
             console.log(error); 
-            alert("Unable to get picks. Refresh the page and try again.");
+            alert('Unable to get picks. Refresh the page and try again.');
         });
     }
 
@@ -99,7 +99,7 @@ function EnterPicks() {
             {
                 'username': newSession['accessToken']['payload']['username'],
                 'weekNum': activePage,
-                'pick': currentPickArr[activePage-1] || "Team" + activePage
+                'pick': currentPickArr[activePage-1] || 'Team' + activePage
             },
             {
                 headers: {
@@ -111,8 +111,8 @@ function EnterPicks() {
             window.location.reload();
         }).catch((error) => {
             console.log(error);
-            if(error["response"]["status"] === 403) alert("The deadline has passed for this week and your pick cannot be submitted.");
-            else alert("Unable to submit pick. Please text 847-630-2489 to submit.");
+            if(error['response']['status'] === 403) alert('The deadline has passed for this week and your pick cannot be submitted.');
+            else alert('Unable to submit pick. Please text 847-630-2489 to submit.');
         });
 
     }
@@ -162,14 +162,14 @@ function EnterPicks() {
         // setIsTeamSelectedArr(newTeamSelectedArr);
 
         let newPickArr = {...currentPickArr};
-        if(unclickTeam) newPickArr[activePage-1] = ""
+        if(unclickTeam) newPickArr[activePage-1] = ''
         else newPickArr[activePage-1] = currName;
         setCurrentPickArr(newPickArr);
     }
 
     let arrButtons = [];
     let weeklyButtons = [];
-    let prevDeadline = "";
+    let prevDeadline = '';
     let isFirstTeamPicked, isSecondTeamPicked, buttonColor, currKey, currVal, currDeadline, eligibility;
 
     if(!locked[activePage-1] && matchupsArr.length > 1 && userPicks.length > 1) {
@@ -183,7 +183,7 @@ function EnterPicks() {
             currKey = Object.keys(userPicks[activePage-1])[0];
             currVal = Object.values(userPicks[activePage-1])[0];
     
-            buttonColor = (typeof(currVal) === "string") ? "outline-primary" : (currVal ? "outline-success" : "outline-danger");
+            buttonColor = (typeof(currVal) === 'string') ? 'outline-primary' : (currVal ? 'outline-success' : 'outline-danger');
             
             isFirstTeamPicked = userPicks.filter(function (key) {
                                     return key.hasOwnProperty(firstTeam);
@@ -199,9 +199,9 @@ function EnterPicks() {
                 );
             }
     
-            currDeadline = deadlinesArr.length > 1 ? deadlinesArr[activePage-1][i/2] : "";
+            currDeadline = deadlinesArr.length > 1 ? deadlinesArr[activePage-1][i/2] : '';
             if(currDeadline !== prevDeadline) {
-                console.log("Banner")
+                console.log('Banner')
                 arrButtons.push(
                     <span key={i+'-span'} className={'game-day-header'}> {GameDeadlineTitle(currDeadline, activePage)} </span>
                 )
@@ -211,35 +211,35 @@ function EnterPicks() {
             prevDeadline = currDeadline;
             eligibility = PickEligibility(activePage, currDeadline);
             if((activePage < CurrentWeekNum() || !eligibility) && currKey !== firstTeam) {
-                arrButtons.push(<Button key={i} variant="outline-secondary" className="pick-select-button" disabled> <NFLTeamOne/>{firstTeam}</Button>)
+                arrButtons.push(<Button key={i} variant='outline-secondary' className='pick-select-button' disabled> <NFLTeamOne/>{firstTeam}</Button>)
             } else if((activePage < CurrentWeekNum() || !eligibility) && currKey !== firstTeam) {
-                arrButtons.push(<Button key={i} variant={buttonColor} className="pick-select-button" disabled> <NFLTeamOne/>{firstTeam}</Button>)
+                arrButtons.push(<Button key={i} variant={buttonColor} className='pick-select-button' disabled> <NFLTeamOne/>{firstTeam}</Button>)
             } else if(activePage < CurrentWeekNum() && currKey === firstTeam) {
-                arrButtons.push(<Button key={i} variant={buttonColor} className="pick-select-button" active> <NFLTeamOne/> {firstTeam}</Button>)
+                arrButtons.push(<Button key={i} variant={buttonColor} className='pick-select-button' active> <NFLTeamOne/> {firstTeam}</Button>)
             } else if(isFirstTeamPicked && currKey !== firstTeam) {
-                arrButtons.push(<Button key={i} variant="outline-secondary" className="pick-select-button" disabled> <NFLTeamOne/>{firstTeam}</Button>)
+                arrButtons.push(<Button key={i} variant='outline-secondary' className='pick-select-button' disabled> <NFLTeamOne/>{firstTeam}</Button>)
             } else if (firstTeam !== currKey) {
-                arrButtons.push(<Button key={i} variant="outline-primary" className="pick-select-button" active={(activeButtonArr[activePage-1][i] === null) ? false : activeButtonArr[activePage-1][i]} onClick={(event)=>handleTeamChosen(event,i)}> <NFLTeamOne/> {firstTeam} </Button>)
+                arrButtons.push(<Button key={i} variant='outline-primary' className='pick-select-button' active={(activeButtonArr[activePage-1][i] === null) ? false : activeButtonArr[activePage-1][i]} onClick={(event)=>handleTeamChosen(event,i)}> <NFLTeamOne/> {firstTeam} </Button>)
             } else if(!eligibility) {
-                arrButtons.push(<Button key={i} variant={buttonColor} className="pick-select-button" active={true}> <NFLTeamOne/> {firstTeam} </Button>)
+                arrButtons.push(<Button key={i} variant={buttonColor} className='pick-select-button' active={true}> <NFLTeamOne/> {firstTeam} </Button>)
             } else {
-                arrButtons.push(<Button key={i} variant={buttonColor} className="pick-select-button" active={(activeButtonArr[activePage-1][i] === null) ? true : activeButtonArr[activePage-1][i]} onClick={(event)=>handleTeamChosen(event,i)}> <NFLTeamOne/> {firstTeam} </Button>)
+                arrButtons.push(<Button key={i} variant={buttonColor} className='pick-select-button' active={(activeButtonArr[activePage-1][i] === null) ? true : activeButtonArr[activePage-1][i]} onClick={(event)=>handleTeamChosen(event,i)}> <NFLTeamOne/> {firstTeam} </Button>)
             }
     
             if((activePage < CurrentWeekNum() || !eligibility) && currKey !== secondTeam) {
-                arrButtons.push(<Button key={i+1} variant="outline-secondary" className="pick-select-button" disabled> <NFLTeamTwo/> {secondTeam}</Button>)
+                arrButtons.push(<Button key={i+1} variant='outline-secondary' className='pick-select-button' disabled> <NFLTeamTwo/> {secondTeam}</Button>)
             } else if((activePage < CurrentWeekNum() || !eligibility) && currKey !== secondTeam) {
-                arrButtons.push(<Button key={i+1} variant={buttonColor} className="pick-select-button" disabled> <NFLTeamTwo/> {secondTeam}</Button>)
+                arrButtons.push(<Button key={i+1} variant={buttonColor} className='pick-select-button' disabled> <NFLTeamTwo/> {secondTeam}</Button>)
             } else if(activePage < CurrentWeekNum() && currKey === secondTeam) {
-                arrButtons.push(<Button key={i+1} variant={buttonColor} className="pick-select-button" active> <NFLTeamTwo/> {secondTeam}</Button>)
+                arrButtons.push(<Button key={i+1} variant={buttonColor} className='pick-select-button' active> <NFLTeamTwo/> {secondTeam}</Button>)
             } else if(isSecondTeamPicked && currKey !== secondTeam) {
-                arrButtons.push(<Button key={i+1} variant="outline-secondary" className="pick-select-button" disabled> <NFLTeamTwo/> {secondTeam}</Button>)
+                arrButtons.push(<Button key={i+1} variant='outline-secondary' className='pick-select-button' disabled> <NFLTeamTwo/> {secondTeam}</Button>)
             } else if (secondTeam !== currKey) {
-                arrButtons.push(<Button key={i+1} variant="outline-primary" className="pick-select-button" active={(activeButtonArr[activePage-1][i+1] === null) ? false : activeButtonArr[activePage-1][i+1]} onClick={(event)=>handleTeamChosen(event,i+1)}> <NFLTeamTwo/> {secondTeam} </Button>)
+                arrButtons.push(<Button key={i+1} variant='outline-primary' className='pick-select-button' active={(activeButtonArr[activePage-1][i+1] === null) ? false : activeButtonArr[activePage-1][i+1]} onClick={(event)=>handleTeamChosen(event,i+1)}> <NFLTeamTwo/> {secondTeam} </Button>)
             } else if(!eligibility) {
-                arrButtons.push(<Button key={i+1} variant={buttonColor} className="pick-select-button" active={true}> <NFLTeamTwo/> {secondTeam} </Button>)
+                arrButtons.push(<Button key={i+1} variant={buttonColor} className='pick-select-button' active={true}> <NFLTeamTwo/> {secondTeam} </Button>)
             } else {
-                arrButtons.push(<Button key={i+1} variant={buttonColor} className="pick-select-button" active={(activeButtonArr[activePage-1][i+1] === null) ? true : activeButtonArr[activePage-1][i+1]} onClick={(event)=>handleTeamChosen(event,i+1)}> <NFLTeamTwo/> {secondTeam} </Button>)
+                arrButtons.push(<Button key={i+1} variant={buttonColor} className='pick-select-button' active={(activeButtonArr[activePage-1][i+1] === null) ? true : activeButtonArr[activePage-1][i+1]} onClick={(event)=>handleTeamChosen(event,i+1)}> <NFLTeamTwo/> {secondTeam} </Button>)
             }
         }
     }
@@ -247,10 +247,10 @@ function EnterPicks() {
     else if(locked[activePage-1] && matchupsArr.length > 1 && userPicks.length > 1) {
         let team = Object.keys(userPicks[activePage-1])[0];
 
-        if(team.includes("Team")) {
+        if(team.includes('Team')) {
             weeklyButtons.push(
                 <div key={activePage+'-locked'}className='locked-pick-section'>
-                    <Lock className="locked-tooltip-icon" />
+                    <Lock className='locked-tooltip-icon' />
                     Your pick is locked for Week {activePage}: None
                 </div>
             )
@@ -259,7 +259,7 @@ function EnterPicks() {
 
             weeklyButtons.push(
                 <div key={activePage+'-locked'}className='locked-pick-section'>
-                    <Lock className="locked-tooltip-icon" />
+                    <Lock className='locked-tooltip-icon' />
                     Your pick is locked for Week {activePage}:
                     <span className='locked-pick-offset'>
                         <NFLTeam/>
@@ -297,15 +297,15 @@ function EnterPicks() {
                 <div className='team-section'>
                     
                     <Form onSubmit={submitUserPick}>
-                        <ButtonToolbar aria-label="Toolbar with button groups">
-                            <ButtonGroup className="me-2 team-group" aria-label="First group">
+                        <ButtonToolbar aria-label='Toolbar with button groups'>
+                            <ButtonGroup className='me-2 team-group' aria-label='First group'>
                                 {arrButtons}
                                 <p className='breaker'/>
-                                {/* <Button type="submit" disabled={!isTeamSelectedArr[activePage-1]}> Submit </Button> */}
+                                {/* <Button type='submit' disabled={!isTeamSelectedArr[activePage-1]}> Submit </Button> */}
                                 {
                                     !locked[activePage-1]
-                                        ? <Button type="submit" disabled={!PickEligibility(activePage, "normal")}> Submit </Button>
-                                        : ""
+                                        ? <Button type='submit' disabled={!PickEligibility(activePage, 'normal')}> Submit </Button>
+                                        : ''
                                 }
                                     
                             </ButtonGroup>
@@ -317,7 +317,7 @@ function EnterPicks() {
                     {
                          showSubmitButton
                          ? <Pagination className='pagination-enter-picks'>{items}</Pagination>
-                         : ""
+                         : ''
                     }
                     
                 </div>
